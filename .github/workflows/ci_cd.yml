@@ -11,9 +11,8 @@ on:
 
 jobs:
   build:
-
+    name: Build, Test and Deploy
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.8
@@ -69,20 +68,6 @@ jobs:
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         function_name: fpl-data-test
         zip_file: dist/fpl-data.zip
-    - name: Invoke fpl-data-test Lambda
-      id: fpl-data-test-invoke
-      if: github.ref == 'refs/heads/develop'
-      uses: gagoar/invoke-aws-lambda@master
-      with:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        REGION: eu-west-2
-        FunctionName: fpl-data-test
-        LogType: Tail
-        Payload: '{}'
-    - name: Store fpl-data-test logs to file
-      if: github.ref == 'refs/heads/develop'
-      run: echo "${{ fromJSON(steps.fpl-data-test-invoke.outputs.response).LogResult }}" > invocation-logs.json
     - name: Deploy to fpl-data lambda
       if: github.ref == 'refs/heads/master'
       uses: appleboy/lambda-action@v0.0.7
