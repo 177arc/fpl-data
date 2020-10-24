@@ -55,6 +55,11 @@ jobs:
       run: |
         mkdir dist
         zip -r dist/fpl-data.zip *.py *.ipnynb data/** fpldata/** -x *.pyc
+    - name: Upload package
+      uses: actions/upload-artifact@v2
+      with:
+        name: fpl-data
+        path: dist/fpl-data.zip
     - name: Deploy to fpl-data-test lambda
       if: github.ref == 'refs/heads/develop'
       uses: appleboy/lambda-action@v0.0.7
