@@ -51,7 +51,11 @@ jobs:
       run: |
         cd tests/integration
         python -m unittest discover -s "."
-    - name: Deploy lambda to test
+    - name: Create lambda package
+      run: |
+        mkdir dist
+        zip -r dist/fpl-data.zip *.py *.ipnynb data/** fpldata/** -x *.pyc
+    - name: Deploy to fpl-data-test lambda
       if: github.ref == 'refs/heads/develop'
       uses: appleboy/lambda-action@v0.0.7
       with:
@@ -74,7 +78,7 @@ jobs:
     - name: Store fpl-data-test logs to file
       if: github.ref == 'refs/heads/develop'
       run: echo "${{ fromJSON(steps.fpl-data-test-invoke.outputs.response).LogResult }}" > invocation-logs.json
-    - name: Deploy lambda to production
+    - name: Deploy to fpl-data lambda
       if: github.ref == 'refs/heads/master'
       uses: appleboy/lambda-action@v0.0.7
       with:
