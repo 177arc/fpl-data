@@ -52,7 +52,7 @@ jobs:
         cd tests/integration
         python -m unittest discover -s "."
     - name: Deploy lambda to test
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/develop'
       uses: appleboy/lambda-action@v0.0.7
       with:
         aws_region: eu-west-2
@@ -72,6 +72,7 @@ jobs:
         LogType: Tail
         Payload: '{}'
     - name: Store fpl-data-test logs to file
+      if: github.ref == 'refs/heads/develop'
       run: echo "${{ fromJSON(steps.fpl-data-test-invoke.outputs.response).LogResult }}" > invocation-logs.json
     - name: Deploy lambda to production
       if: github.ref == 'refs/heads/master'
