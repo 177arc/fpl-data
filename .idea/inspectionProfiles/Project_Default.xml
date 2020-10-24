@@ -1,0 +1,17 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="datadict.DataDict" />
+          <option value="https" />
+          <option value="object.run_until_complete" />
+          <option value="object.*" />
+          <option value="fpl.fpl.FPL.get_user_team" />
+          <option value="typing.Hashable.startswith" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
