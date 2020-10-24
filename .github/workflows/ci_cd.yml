@@ -60,7 +60,7 @@ jobs:
       uses: appleboy/lambda-action@v0.0.7
       with:
         aws_region: eu-west-2
-        aws_access_key_id: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         function_name: fpl-data-test
         zip_file: dist/fpl-data.zip
