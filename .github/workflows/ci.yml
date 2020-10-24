@@ -1,0 +1,58 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python application
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Convert Jupyter notebook to code
+      run: |
+        jupyter nbconvert --to script prep_data.ipynb
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Run unit tests
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        cd tests/integration
+        python -m unittest discover -s "."
+    - name: Deploy lambda
+      # You may pin to the exact commit or the version.
+      # uses: appleboy/lambda-action@01e13ddc88d9ee7661650837f94d8b686ef6d1be
+      uses: appleboy/lambda-action@v0.0.7
+      with:
+        # AWS Region
+        aws_region: eu-west-2
+        # AWS ACCESS KEY
+        aws_access_key_id: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        # AWS SECRET KEY
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        # AWS lambda function name
+        function_name: fpl-data
+        # AWS lambda zip file
+        zip_file: dist/fpl-data.zip
