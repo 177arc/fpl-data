@@ -24,7 +24,7 @@ class S3Store():
     def __is_csv(self, file_name: str) -> bool:
         return file_name.endswith('.csv')
 
-    def __init__(self, s3: boto3.resource = None, s3_bucket: str = None):
+    def __init__(self,  s3_bucket: str = None, s3: boto3.client = None):
         """
         Initialise the S3 store.
 
@@ -32,7 +32,7 @@ class S3Store():
             s3:  The S3 resource. If not provided, defaults to the standard S3 resource.
             s3_bucket: The name of the S3 bucket. If not provided, default to 'fpl.177arc.net'.
         """
-        self.s3 = s3 if s3 is not None else boto3.resource('s3')
+        self.s3 = s3 if s3 is not None else boto3.client('s3')
         self.s3_bucket = s3_bucket if s3_bucket is not None else self.def_s3_bucket
 
     def save_df(self, df: DF, key_name: str) -> None:
@@ -72,7 +72,7 @@ class S3Store():
             csv_buffer = StringIO()
             list(dfs.values())[0].to_csv(csv_buffer)
 
-        self.s3.Object(self.s3_bucket, key_name).put(Body=csv_buffer.getvalue())
+        self.s3.put_object(Body=csv_buffer.getvalue(), Bucket=self.s3_bucket, Key=key_name, ContentEncoding='gzip')
 
     def save_file(self, source_file: str, key_name: str) -> None:
         """
@@ -88,9 +88,9 @@ class S3Store():
                 with GzipFile(None, 'wb', 9, gz_buffer) as gz:
                     shutil.copyfileobj(fp, gz)
 
-                self.s3.Object(self.s3_bucket, key_name).put(Body=gz_buffer.getvalue(), ContentEncoding='gzip')
+                self.s3.put_object(Body=gz_buffer.getvalue(), Bucket=self.s3_bucket, Key=key_name, ContentEncoding='gzip')
             else:
-                self.s3.Object(self.s3_bucket, key_name).put(Body=fp.read())
+                self.s3.put_object(Body=fp.read(), Bucket=self.s3_bucket, Key=key_name)
 
     def save_dir(self, source_dir: str, key_name: str = '') -> None:
         """
@@ -108,7 +108,7 @@ class S3Store():
                     for file in files:
                         zf.write(f'{root}/{file}', arcname=file)
 
-            self.s3.Object(self.s3_bucket, key_name).put(Body=zip_buffer.getvalue())
+            self.s3.put_object(Body=zip_buffer.getvalue(), Bucket=self.s3_bucket, Key=key_name)
         else:
             for root, dirs, files in os.walk(source_dir):
                 for file in files:
@@ -126,8 +126,8 @@ class S3Store():
             The data frame.
         """
 
-        obj = self.s3.Object(self.s3_bucket, key_name)
-        buffer = BytesIO(obj.get()["Body"].read())
+        obj = self.s3.get_object(Bucket=self.s3_bucket, Key=key_name)
+        buffer = BytesIO(obj["Body"].read())
 
         if self.__is_zip(key_name):
             zf = ZipFile(buffer)
@@ -151,8 +151,8 @@ class S3Store():
             A map of data frame names to the data frames that have been loaded.
         """
 
-        obj = self.s3.Object(self.s3_bucket, key_name)
-        buffer = BytesIO(obj.get()["Body"].read())
+        obj = self.s3.get_object(Bucket=self.s3_bucket, Key=key_name)
+        buffer = BytesIO(obj["Body"].read())
 
         dfs = {}
         if self.__is_zip(key_name):

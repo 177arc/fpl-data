@@ -34,8 +34,8 @@ class TestS3Store(unittest.TestCase):
 
 
     def __read_df(self, obj_name: str) -> DF:
-        obj = self.s3.Object(self.test_s3_bucket, obj_name)
-        content = BytesIO(obj.get()["Body"].read())
+        obj = self.s3.get_object(Bucket=self.test_s3_bucket, Key=obj_name)
+        content = BytesIO(obj["Body"].read())
 
         compression = None
         if obj_name.endswith('.gz'):
@@ -57,14 +57,14 @@ class TestS3Store(unittest.TestCase):
         return dfs
 
     def __read_zip(self, obj_name: str) -> ZipFile:
-        obj = self.s3.Object(self.test_s3_bucket, obj_name)
-        buffer = BytesIO(obj.get()["Body"].read())
+        obj = self.s3.get_object(Bucket=self.test_s3_bucket, Key=obj_name)
+        buffer = BytesIO(obj["Body"].read())
         return ZipFile(buffer)
 
     def __write_df(self, df: DF, obj_name: str) -> None:
         csv_buffer = StringIO()
         df.to_csv(csv_buffer)
-        self.s3.Object(self.test_s3_bucket, obj_name).put(Body=csv_buffer.getvalue())
+        self.s3.put_object(Bucket=self.test_s3_bucket, Key=obj_name, Body=csv_buffer.getvalue())
 
     def __write_df_zip(self, df: DF, obj_name: str) -> None:
         self.__write_dfs_zip({obj_name.replace('.zip', ''): df}, obj_name)
@@ -77,16 +77,16 @@ class TestS3Store(unittest.TestCase):
                 df.to_csv(csv_buffer)
                 zf.writestr(df_name+'.csv', csv_buffer.getvalue())
 
-        self.s3.Object(self.test_s3_bucket, obj_name).put(Body=zip_buffer.getvalue())
+        self.s3.put_object(Bucket=self.test_s3_bucket, Key=obj_name, Body=zip_buffer.getvalue())
 
     def __del(self, obj_name: str) -> None:
-        self.s3.Object(self.test_s3_bucket, obj_name).delete()
+        self.s3.delete_object(Bucket=self.test_s3_bucket, Key=obj_name)
 
     def setUp(self) -> None:
         warnings.filterwarnings("ignore", category=ResourceWarning, message="unclosed.*<ssl.SSLSocket.*>")
 
         self.s3store = S3Store(s3_bucket=self.test_s3_bucket)
-        self.s3 = boto3.resource('s3')
+        self.s3 = boto3.client('s3')
         self.dfs = {'df1': pd.DataFrame.from_dict(
                         {0: ['test 1', 1, True, 1.1, 'bayern'],
                         1: ['test 2', 2, False, 1.2, 'bayern'],
