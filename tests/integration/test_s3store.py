@@ -35,10 +35,10 @@ class TestS3Store(unittest.TestCase):
 
     def __read_df(self, obj_name: str) -> DF:
         obj = self.s3.get_object(Bucket=self.test_s3_bucket, Key=obj_name)
-        content = BytesIO(obj["Body"].read())
+        content = BytesIO(obj['Body'].read())
 
         compression = None
-        if obj_name.endswith('.gz'):
+        if obj['ContentEncoding'] == 'gzip':
             compression = 'gzip'
 
         return pd.read_csv(content, compression=compression)
@@ -162,7 +162,7 @@ class TestS3Store(unittest.TestCase):
         # Assert
         actual_dfs = {}
         for df_name in dfs.keys():
-            actual_dfs[df_name] = self.__read_df(df_name+'.csv.gz')
+            actual_dfs[df_name] = self.__read_df(df_name+'.csv')
 
         for df_name, df in dfs.items():
             assert_frame_equal(df, actual_dfs[df_name], check_dtype=False, check_column_type=False)
@@ -179,17 +179,17 @@ class TestS3Store(unittest.TestCase):
         # Assert
         actual_dfs = {}
         for df_name in dfs.keys():
-            actual_dfs[df_name] = self.__read_df('dfs/'+df_name+'.csv.gz')
+            actual_dfs[df_name] = self.__read_df('dfs/'+df_name+'.csv')
 
         for df_name, df in dfs.items():
             assert_frame_equal(df, actual_dfs[df_name], check_dtype=False, check_column_type=False)
 
     def test_save_file_gz(self):
         # Execute test
-        self.s3store.save_file('dfs/df1.csv', 'df1.csv.gz')
+        self.s3store.save_file('dfs/df1.csv', 'df1.csv', content_encoding='gzip')
 
         # Assert
-        actual_df = self.__read_df('df1.csv.gz')
+        actual_df = self.__read_df('df1.csv')
         assert_frame_equal(pd.read_csv('dfs/df1.csv'), actual_df, check_dtype=False, check_column_type=False)
 
     def test_save_file(self):

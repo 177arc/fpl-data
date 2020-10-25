@@ -40,12 +40,12 @@ def get_fixture_teams(fixtures: DF, teams: DF, ctx: Context) -> DF:
 
 
 def get_players_history_fixtures(players_history: DF, fixtures: DF, player_teams: DF, ctx: Context) -> DF:
-    return (players_history[['Game Total Points', 'Game Minutes Played', 'Game Cost']]
+    return (players_history[['Fixture Total Points', 'Fixture Minutes Played', 'Fixture Cost']]
             .reset_index()
             .merge(fixtures, left_on='Fixture Code', right_index=True)
             .merge(player_teams[['Player Team Code', 'Field Position', 'Minutes Percent', 'News And Date', 'Team Short Name', 'Name and Short Team']], left_on='Player Code', right_index=True)
-            .assign(**{'Fixture Played': lambda df: df['Game Minutes Played'] > 0})
-            .assign(**{'Total Points To Fixture': lambda df: df.groupby('Player Code')['Game Total Points'].apply(lambda x: x.shift().rolling(ctx.player_fixtures_look_back, min_periods=1).sum()).fillna(0.0)})
+            .assign(**{'Fixture Played': lambda df: df['Fixture Minutes Played'] > 0})
+            .assign(**{'Total Points To Fixture': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.shift().rolling(ctx.player_fixtures_look_back, min_periods=1).sum()).fillna(0.0)})
             .assign(**{'Fixtures Played To Fixture': lambda df: df.groupby('Player Code')['Fixture Played'].apply(lambda x: x.shift().rolling(ctx.player_fixtures_look_back, min_periods=1).sum().fillna(method='ffill').fillna(0))})
             .set_index(['Player Code', 'Fixture Code']))
 
@@ -97,8 +97,8 @@ def calc_stats(df: DF, game_week: int = None) -> S:
     if game_week is not None:
         df = df[df['Game Week'] <= game_week]
 
-    s = {'Total Points': df['Game Total Points'].sum(),
-         'Total Points Consistency': calc_consistency(df['Game Total Points']),
+    s = {'Total Points': df['Fixture Total Points'].sum(),
+         'Total Points Consistency': calc_consistency(df['Fixture Total Points']),
          'Player Team Code': team_code}
 
     return S(s)
@@ -333,14 +333,14 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
     return (players[['Name', 'Player Team Code', 'Field Position']]
             .reset_index()
             .merge(team_fixture_strength, left_on='Player Team Code', right_index=True, suffixes=(False, False))
-            .merge(players_history[['Game Minutes Played', 'Game Total Points']],
+            .merge(players_history[['Fixture Minutes Played', 'Fixture Total Points']],
                    left_on=['Player Code', 'Fixture Code'], right_index=True, how='left', suffixes=(False, False))
             .sort_values(['Player Code', 'Kick Off Time'])
             .set_index(['Player Code', 'Fixture Code'])
-            .assign(**{'Fixture Played': lambda df: df['Game Minutes Played'] > 0})
-            .assign(**{'Rolling Avg Game Points': lambda df: df.groupby('Player Code')['Game Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
+            .assign(**{'Fixture Played': lambda df: df['Fixture Minutes Played'] > 0})
+            .assign(**{'Rolling Avg Game Points': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
                     .where((df['Season'] == ctx.current_season) & (df['Game Week'] < ctx.next_gw) | (df['Season'] != ctx.current_season))})
-            .assign(**{'Total Points To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Game Total Points', ctx).ffill()})
+            .assign(**{'Total Points To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Total Points', ctx).ffill()})
             .assign(**{'Fixtures Played To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Played', ctx).ffill()})
             .assign(**{'Stats Completeness Percent': lambda df: df['Fixtures Played To Fixture'] / ctx.player_fixtures_look_back * 100})
             .assign(**{'Rel Fixture Strength': lambda df: np.where(df['Is Home?'],
@@ -350,18 +350,18 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
                                                                    np.where(df['Field Position'].isin(['FWD', 'MID']),
                                                                             df['Rel Opp Avg Team Goals Conceded Home To Fixture'].fillna(1),
                                                                             1 / (df['Rel Opp Avg Team Goals Scored Home To Fixture'].fillna(1))))})
-            .drop(columns=['Game Minutes Played', 'Game Total Points', 'Fixture Played']))
+            .drop(columns=['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Played']))
 
 
 def calc_player_fixture_stats(players_fixture_team_points: DF):
     return (players_fixture_team_points
             .sort_values('Kick Off Time')
-            .assign(**{'Fixture Played': lambda df: df['Game Minutes Played'] > 0})
+            .assign(**{'Fixture Played': lambda df: df['Fixture Minutes Played'] > 0})
             .assign(**{'Fixtures Played To Fixture': lambda df: df.groupby('Player Code')['Fixture Played'].apply(lambda x: x.shift().cumsum().fillna(method='ffill').fillna(0))})
-            .assign(**{'Total Points To Fixture': lambda df: df.groupby('Player Code')['Game Total Points'].apply(lambda x: x.shift().cumsum().fillna(method='ffill').fillna(0))})
+            .assign(**{'Total Points To Fixture': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.shift().cumsum().fillna(method='ffill').fillna(0))})
             .assign(**{'Total Opp Team Goals Scored Diff': lambda df: df['Total Team Goals Scored'] - df['Total Opp Team Goals Scored']})
-            .assign(**{'Avg Points To Fixture': lambda df: df.groupby('Player Code')['Game Total Points'].apply(lambda x: x.shift().rolling(10, min_periods=1).mean().fillna(method='ffill').fillna(0.0))})
-            .assign(**{'Avg Minutes Played Recently To Fixture': lambda df: df.groupby('Player Code')['Game Minutes Played'].apply(lambda x: x.shift().rolling(10, min_periods=1).mean()).fillna(0.0)})
+            .assign(**{'Avg Points To Fixture': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.shift().rolling(10, min_periods=1).mean().fillna(method='ffill').fillna(0.0))})
+            .assign(**{'Avg Minutes Played Recently To Fixture': lambda df: df.groupby('Player Code')['Fixture Minutes Played'].apply(lambda x: x.shift().rolling(10, min_periods=1).mean()).fillna(0.0)})
             .assign(**{'Avg Points Opp Points Adj To Fixture': lambda df: df.apply(lambda row: row['Avg Points To Fixture'] * row['Team Total Points Est'] / row['Opp Team Total Points Est'], axis=1).fillna(0.0)}))
 
 
@@ -446,7 +446,7 @@ def get_players_future_fixture_team_strengths(player_teams: DF, team_future_fixt
 
 
 def get_player_fixture_stats(players_history_fixtures: DF, players_future_fixture_team_strengths: DF, player_team_fixture_strength: DF) -> DF:
-    return (pd.concat([players_history_fixtures[['Game Total Points', 'Game Minutes Played', 'Game Cost', 'Field Position']],
+    return (pd.concat([players_history_fixtures[['Fixture Total Points', 'Fixture Minutes Played', 'Fixture Cost', 'Field Position']],
                        players_future_fixture_team_strengths], sort=False)
             .drop(columns=['Player Team Code'])
             .merge(player_team_fixture_strength.drop(columns=['Field Position']), left_index=True, right_index=True, suffixes=(False, False))
@@ -489,7 +489,7 @@ def get_players_fixture_team_eps(player_fixture_stats: DF) -> DF:
 
 def proj_to_gw(players_fixture_team_eps: DF) -> DF:
     def proj_to_gw_func(col: S):
-        if col.name in ('Game Total Points', 'Game Minutes Played') or col.name.startswith('Expected Points'):
+        if col.name in ('Fixture Total Points', 'Fixture Minutes Played') or col.name.startswith('Expected Points'):
             return 'sum'
 
         if col.name == 'Fixture Short Name FDR':
@@ -518,8 +518,8 @@ def proj_to_gw(players_fixture_team_eps: DF) -> DF:
     def nan_future_gws(players_gw_team_eps: DF) -> DF:
         # This is necessary because the results of the sum function is 0 and not np.nan for series with only pd.nan elements and calling sum with min_count=1 is too slow.
         return (players_gw_team_eps
-                .assign(**{'Game Total Points': lambda df: np.where(df['Game Cost'].isnull(), np.nan, df['Game Total Points'])})
-                .assign(**{'Game Minutes Played': lambda df: np.where(df['Game Cost'].isnull(), np.nan, df['Game Total Points'])}))
+                .assign(**{'Fixture Total Points': lambda df: np.where(df['Fixture Cost'].isnull(), np.nan, df['Fixture Total Points'])})
+                .assign(**{'Fixture Minutes Played': lambda df: np.where(df['Fixture Cost'].isnull(), np.nan, df['Fixture Total Points'])}))
 
     def get_player_gws(players_gw_team_eps: DF) -> pd.Index:
         # Create a data frame with a row of every game week/player ID combination for the current and the last season. This is required to deal with game weeks that have double or missing fixtures.

@@ -18,9 +18,6 @@ class S3Store():
     def __is_zip(self, file_name: str) -> bool:
         return file_name.endswith('.zip')
 
-    def __is_gz(self, file_name: str) -> bool:
-        return file_name.endswith('.gz')
-
     def __is_csv(self, file_name: str) -> bool:
         return file_name.endswith('.csv')
 
@@ -59,38 +56,38 @@ class S3Store():
         if len(dfs) > 1 and not self.__is_zip(key_name):
             raise ValueError(f'The key name {key_name} does not end in \'.zip\'. It needs to because all the data frames will be save to one zip archive.')
 
+        buffer = BytesIO()
         if self.__is_zip(key_name):
-            zip_buffer = BytesIO()
-            with ZipFile(zip_buffer, mode='w', compression=ZIP_DEFLATED) as zf:
+            with ZipFile(buffer, mode='w', compression=ZIP_DEFLATED) as zf:
                 for df_name, df in dfs.items():
                     csv_buffer = StringIO()
                     df.to_csv(csv_buffer)
                     zf.writestr(df_name+'.csv', csv_buffer.getvalue())
-
-            csv_buffer = zip_buffer
         else:
-            csv_buffer = StringIO()
-            list(dfs.values())[0].to_csv(csv_buffer)
+            buffer = BytesIO()
+            with GzipFile(None, 'wb', 9, buffer) as gz:
+                gz.write(list(dfs.values())[0].to_csv().encode())
 
-        self.s3.put_object(Body=csv_buffer.getvalue(), Bucket=self.s3_bucket, Key=key_name, ContentEncoding='gzip')
+        self.s3.put_object(Body=buffer.getvalue(), Bucket=self.s3_bucket, Key=key_name, ContentEncoding='gzip')
 
-    def save_file(self, source_file: str, key_name: str) -> None:
+    def save_file(self, source_file: str, key_name: str, content_encoding: str='') -> None:
         """
         Saves the given file to the S3 bucket.
 
         Args:
             source_file: The file to be uploaded.
-            key_name: The name of the S3 object. If the key name ends in '.gz', the file is uploaded with gzip compression.
+            key_name: The name of the S3 object.
+            content_encoding: The content encoding in S3. If this is set to gzip, the file will be compressed before upload.
         """
         with open(source_file, 'rb') as fp:
-            if self.__is_gz(key_name):
+            if content_encoding == 'gzip':
                 gz_buffer = BytesIO()
                 with GzipFile(None, 'wb', 9, gz_buffer) as gz:
                     shutil.copyfileobj(fp, gz)
 
-                self.s3.put_object(Body=gz_buffer.getvalue(), Bucket=self.s3_bucket, Key=key_name, ContentEncoding='gzip')
+                self.s3.put_object(Body=gz_buffer.getvalue(), Bucket=self.s3_bucket, Key=key_name, ContentEncoding=content_encoding)
             else:
-                self.s3.put_object(Body=fp.read(), Bucket=self.s3_bucket, Key=key_name)
+                self.s3.put_object(Body=fp.read(), Bucket=self.s3_bucket, Key=key_name, ContentEncoding=content_encoding)
 
     def save_dir(self, source_dir: str, key_name: str = '') -> None:
         """
@@ -99,7 +96,7 @@ class S3Store():
         Args:
             source_dir: The directory that contains the files to save.
             key_name: The name of the S3 object. If the key name ends in '.zip', the directory will be uploaded as a zip archive.
-                Otherwise, the files will be uploaded as separate gzip files and the extension '.gz' will be appended.
+                Otherwise, the files will be uploaded as separate gzip files.
         """
         if self.__is_zip(key_name):
             zip_buffer = BytesIO()
@@ -112,7 +109,7 @@ class S3Store():
         else:
             for root, dirs, files in os.walk(source_dir):
                 for file in files:
-                    self.save_file(f'{root}/{file}', f'{key_name}{file}.gz')
+                    self.save_file(f'{root}/{file}', f'{key_name}{file}', content_encoding='gzip')
 
     def load_df(self, key_name: str) -> DF:
         """
