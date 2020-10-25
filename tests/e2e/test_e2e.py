@@ -45,7 +45,7 @@ class TestE2E(unittest.TestCase):
             dict(file='data_dictionary.csv', index=None),
         ]
 
-        # Delete previous artifacts.
+        # Delete previous artifacts
         logging.info(f'Deleting previous artifacts ...')
         for df in dfs:
             self.s3.delete_object(Bucket=self.bucket, Key=df['file'])
@@ -54,12 +54,12 @@ class TestE2E(unittest.TestCase):
         logging.info(f'Invoking {self.lambda_name} ...')
         response = self.lmda.invoke(FunctionName=self.lambda_name, InvocationType='RequestResponse', LogType='Tail')
 
-        # Check response.
+        # Check response
         self.assertEqual(response['StatusCode'], 200)
         self.assertFalse('FunctionError' in response)
 
         logging.info(response['LogResult'])
 
-        # Check data.
+        # Check data
         for df in dfs:
             self.assertTrue(self.__get_df(url=f'{self.data_url}{df["file"]}', index=df['index']).shape[0] > 0)
