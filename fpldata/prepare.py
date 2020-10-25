@@ -85,8 +85,8 @@ def prepare_players_history(players_history_raw: DF, players_id_code_map: S, fix
             .merge(fixtures_id_code_map, left_on='Fixture ID', right_index=True)
             .set_index(['Player Code', 'Fixture Code'])
             .pipe(ctx.dd.ensure_cols, data_set='player_hist')
-            .assign(**{'Game Cost': lambda df: df['Game Cost x10'] / 10})
-            .assign(**{'Game ICT Index': lambda df: pd.to_numeric(df['Game ICT Index'])}))
+            .assign(**{'Fixture Cost': lambda df: df['Fixture Cost x10'] / 10})
+            .assign(**{'Fixture ICT Index': lambda df: pd.to_numeric(df['Fixture ICT Index'])}))
 
 
 def prepare_teams(teams_raw: DF, ctx: Context) -> DF:

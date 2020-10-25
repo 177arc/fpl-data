@@ -69,20 +69,63 @@ fixture,,Rel Fixture Strength,Relative strength of this fixture compared to prev
 player,selling_price,Selling Price,Money received when selling player,float,£{:.1f}m
 player,purchase_price,Purchase Price,Money spent when buying player,float,£{:.1f}m
 player,transfers_in_event,Transfers In This GW,Total number of participants buying the player for the upcoming game week. This is the transfer number displayed on the home page in the transfers section.,int,{:.0f}
-player_hist,transfers_in,Game Transfers In,Total number of participants who bought the player for this fixture.,int,{:.0f}
+player,transfers_in,Total Transfers In,Number of manager that transferred the player in since the beginning of the season.,int,{:.0f}
 player,transfers_out_event,Transfers Out This GW,Total number of participants selling the player for the upcoming game week. This is the transfer number displayed on the home page in the transfers section.,int,{:.0f}
-player_hist,transfers_out,Game Transfers Out,Total number of participants who sold the player for this fixture.,int,{:.0f}
+player,transfers_out,Total Transfers Out,Number of manager that transferred the player out since the beginning of the season.,int,{:.0f}
+player,corners_and_indirect_freekicks_order,Corners & Ind. Free Kicks Order,Rank of the player within his team for taking corner and indirect free kicks.,int,{:.0f}
+player,direct_freekicks_order,Direct Free Kicks Order,Rank of the player within his team for taking direct free kicks.,int,{:.0f}
+player,penalties_order,Penalties Order,Rank of the player within his team for taking penalties.,int,{:.0f}
+player,dreamteam_count,Dream Team Count,Number of time the player has been in the dream team this season.,int,{:.0f}
+player,in_dreamteam,In Dream Team,Is the player currently in the Dream Team?,bool,{:}
+player,form,Form,Average points the player received for each fixture played in the last 30 days.,float,{:.1f}
+player,photo,Profile Picture,Name of the player profile picture.,str,
+player,goals_scored,Goals Scored,Number of goals scored by the player since the beginning of the season.,int,{:.0f}
+player,assists,Assists,Number of assists to goals by the player since the beginning of the season.,int,{:.0f}
+player,clean_sheets,Clean Sheets,"Number of clean sheets that the player was awared since the beginning of the season. Note that if a player does not play during a fixture with a clean sheet, the clean sheet count for this player will not increase.",int,{:.0f}
+player,goals_conceded,Goals Conceded,Number of goals conceded while the player was playing since the beginning of the season.,int,{:.0f}
+player,own_goals,Own Goals,Number of own goals scored by the player since the beginning of the season.,int,{:.0f}
+player,"penalties_saved	",Penalties Saved,Number of penalties saved by the player since the beginning of the season.,int,{:.0f}
+player,penalties_missed,Penalties Missed,Number of penalties missed by the player since the beginning of the season.,int,{:.0f}
+player,yellow_cards,Yellow Cards,Number of yellow cards received by the player since the beginning of the season.,int,{:.0f}
+player,red_cards,Red Cards,Number of red cards received by the player since the beginning of the season.,int,{:.0f}
+player,saves,Saves,Number of saves the player has made since the beginning of the season.,int,{:.0f}
+player,bonus,Bonus Points,Number of bonus points the player has earned since the beginning of the season.,int,{:.0f}
+player,bps,BPS Score,Score of the player since the beginning of the season according to the Bonus Point System (see https://www.premierleague.com/news/106533).,int,{:.0f}
+player,ict_index,ICT Index,"ICT Index as calculated by FPL based on the Influence, Creativity and Threat.",float,{:.1f}
+player,ict_index_rank,ICT Index Rank,ICT Index of the player compared to others as calculated by FPL. The lower the rank the better.,int,{:.0f}
+player,influence,Influence,Degree to which the player has made an impact throughout the season as calculated by FPL. It takes into account events and actions that could directly or indirectly effect the outcome of the fixture. At the top level these are decisive actions like goals and assists. But the Influence score also processes significant defensive actions to analyse the effectiveness of defenders and goalkeepers.,float,{:.1f}
+player,influence_rank,Influence Rank,Influence of the player compared to others as calculated by FPL. The lower the rank the better.,int,{:.0f}
+player,creativity,Creativity,"Performance of the player in terms of producing goalscoring opportunities for others as calculated by FPL. It can be used as a guide to identify the players most likely to supply assists. While this analyses frequency of passing and crossing, it also considers pitch location and quality of the final ball.",float,{:.1f}
+player,creativity_rank,Creativity Rank,Creativity of the player compared to others as calculated by FPL. The lower the rank the better.,int,{:.0f}
+player,threat,Threat,"Threat of the player on goal as calculated by FPL. It gauges individuals most likely to score goals. While attempts are the key action, the Index looks at pitch location, giving greater weight to actions that are regarded as the best chances to score.",float,{:.1f}
+player,threat_rank,Threat Rank,Threat of the player compared to others as calculated by FPL. The lower the rank the better.,int,{:.0f}
 team,,Team FDR,Difficulty score of the team (1: Easy to 5: Difficult),int,{:.0f}
 fixture,started,Started,Whether the game has started,bool,
 fixture,finished,Finished,Whether the game has finished,bool,
-player,ict_index,ICT Index,ICT Index as calculated by Fantasy Premier Leauge,float,{:.1f}
 player,element_type,Field Position Code,ID of the position that the player plays in,int,
-player_hist,fixture,Fixture ID,ID of the fixture,int,
-player_hist,player_id,Player ID,ID of the player,int,{:.1f}
-player_hist,ict_index,Game ICT Index,ICT Index as calculated by Fantasy Premier Leauge at the time of the fixture,float,{:.1f}
-player_hist,total_points,Game Total Points,Total points that the player was awarded for the fixture,int,{:.0f}pts
-player_hist,minutes,Game Minutes Played,Number of minutes the player played at the fixture,int,
-player_hist,value,Game Cost x10,The cost of the player at the end of the season in millions times 10,float,{:.0f}
+player_hist,fixture,Fixture ID,ID of the fixture.,int,
+player_hist,player_id,Player ID,ID of the player.,int,{:.1f}
+player_hist,total_points,Fixture Total Points,Total points that the player was awarded for the fixture.,int,{:.0f}pts
+player_hist,minutes,Fixture Minutes Played,Number of minutes the player played at the fixture.,int,
+player_hist,value,Fixture Cost x10,The cost of the player at the end of the season in millions times 10.,float,{:.0f}
+player_hist,goals_scored,Fixture Goals Scored,Number of goals scored by the player during the match.,int,{:.0f}
+player_hist,assists,Fixture Assists,Number of assists to goals by the player during the match.,int,{:.0f}
+player_hist,clean_sheets,Fixture Clean Sheets,"Number of clean sheets that the player was awared during the match. Note that if a player does not play during a fixture with a clean sheet, the clean sheet count for this player will not increase.",int,{:.0f}
+player_hist,goals_conceded,Fixture Goals Conceded,Number of goals conceded while the player was playing during the match.,int,{:.0f}
+player_hist,own_goals,Fixture Own Goals,Number of own goals scored by the player during the match.,int,{:.0f}
+player_hist,"penalties_saved	",Fixture Penalties Saved,Number of penalties saved by the player during the match.,int,{:.0f}
+player_hist,penalties_missed,Fixture Penalties Missed,Number of penalties missed by the player during the match.,int,{:.0f}
+player_hist,yellow_cards,Fixture Yellow Cards,Number of yellow cards received by the player during the match.,int,{:.0f}
+player_hist,red_cards,Fixture Red Cards,Number of red cards received by the player during the match.,int,{:.0f}
+player_hist,saves,Fixture Saves,Number of saves the player has made during the match.,int,{:.0f}
+player_hist,bonus,Fixture Bonus Points,Number of bonus points the player has earned during the match.,int,{:.0f}
+player_hist,bps,Fixture BPS Score,Score of the player for the match according to the Bonus Point System (see https://www.premierleague.com/news/106533).,int,{:.0f}
+player_hist,ict_index,Fixture ICT Index,"ICT Index for the match as calculated by FPL based on the Influence, Creativity and Threat.",float,{:.1f}
+player_hist,influence,Fixture Influence,Degree to which the player has made an impact during the match as calculated by FPL. It takes into account events and actions that could directly or indirectly effect the outcome of the fixture. At the top level these are decisive actions like goals and assists. But the Influence score also processes significant defensive actions to analyse the effectiveness of defenders and goalkeepers.,float,{:.1f}
+player_hist,creativity,Fixture Creativity,"Performance of the player in terms of producing goalscoring opportunities for others during the match as calculated by FPL. It can be used as a guide to identify the players most likely to supply assists. While this analyses frequency of passing and crossing, it also considers pitch location and quality of the final ball.",float,{:.1f}
+player_hist,threat,Fixture Threat,"Threat of the player on goal during the match as calculated by FPL. It gauges individuals most likely to score goals. While attempts are the key action, the Index looks at pitch location, giving greater weight to actions that are regarded as the best chances to score.",float,{:.1f}
+player_hist,transfers_in,Fixture Transfers In,Total number of participants who bought the player before the match.,int,{:.0f}
+player_hist,transfers_out,Fixture Transfers Out,Total number of participants who sold the player before the match.,int,{:.0f}
 fixture,team_a,Away Team ID,ID of the away team for the fixture,int,{:.0f} min
 fixture,team_h,Home Team ID,ID of the home team for the fixture,int,
 fixture,team_a_score,Away Team Score,The goals scored by the away team,int,
@@ -92,7 +135,6 @@ fixture,team_h_difficulty,Home Team FDR,Difficulty score of the home team (1: Ea
 fixture,event,Game Week,The game week of the fixture (1 to 38),int,
 ,,Current Game Week,The current game week for the team.,int,
 fixture,kickoff_time,Kick Off Time,The kick off date and time of the fixture,datetime64,
-fixture,minutes,Fixture Minutes Played,The minutes played at the fixture,int,{:.0f} min
 player,position,Team Position,"Position in the team selection, e.g. 0 is the goal keeper.",int,{:.0f}
 player,multiplier,Point Factor,"The multiplier for calculating the expected points at the team level. This value is 0 for players that are not selected, 2 for the captain and 1 for the rest.",int,
 ,,Player Last Updated,The date/time when the data for this player was last loaded from the FPL API.,datetime64,
