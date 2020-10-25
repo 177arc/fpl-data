@@ -26,11 +26,13 @@ class TestE2E(unittest.TestCase):
     def setUp(self) -> None:
         warnings.filterwarnings('ignore', category=ResourceWarning, message='unclosed.*<ssl.SSLSocket.*>')
 
-        self.lmda = boto3.client('lambda')
-        self.s3 = boto3.client('s3')
         self.bucket = 'fpl-test.177arc.net'
-        self.data_url = f'https://s3.eu-west-2.amazonaws.com/{self.bucket}/'
         self.lambda_name = 'fpl-data-test'
+        self.region_name = 'eu-west-2'
+        self.data_url = f'https://s3.{self.region_name}.amazonaws.com/{self.bucket}/'
+
+        self.lmda = boto3.client('lambda', region_name=self.region_name)
+        self.s3 = boto3.client('s3')
 
 
     def test_lambda(self) -> None:
