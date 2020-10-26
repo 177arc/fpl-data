@@ -328,7 +328,7 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
         return (df.groupby(group_by)
                 [col]
                 .apply(lambda x: x.shift().rolling(ctx.player_fixtures_look_back, min_periods=1).sum())
-                .where((df['Season'] == ctx.current_season) & (df['Game Week'] < ctx.next_gw) | (df['Season'] != ctx.current_season)))
+                .where((df['Season'] == ctx.current_season) & (df['Game Week'] <= ctx.next_gw) | (df['Season'] != ctx.current_season)))
 
     return (players[['Name', 'Player Team Code', 'Field Position']]
             .reset_index()
@@ -351,18 +351,6 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
                                                                             df['Rel Opp Avg Team Goals Conceded Home To Fixture'].fillna(1),
                                                                             1 / (df['Rel Opp Avg Team Goals Scored Home To Fixture'].fillna(1))))})
             .drop(columns=['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Played']))
-
-
-def calc_player_fixture_stats(players_fixture_team_points: DF):
-    return (players_fixture_team_points
-            .sort_values('Kick Off Time')
-            .assign(**{'Fixture Played': lambda df: df['Fixture Minutes Played'] > 0})
-            .assign(**{'Fixtures Played To Fixture': lambda df: df.groupby('Player Code')['Fixture Played'].apply(lambda x: x.shift().cumsum().fillna(method='ffill').fillna(0))})
-            .assign(**{'Total Points To Fixture': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.shift().cumsum().fillna(method='ffill').fillna(0))})
-            .assign(**{'Total Opp Team Goals Scored Diff': lambda df: df['Total Team Goals Scored'] - df['Total Opp Team Goals Scored']})
-            .assign(**{'Avg Points To Fixture': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.shift().rolling(10, min_periods=1).mean().fillna(method='ffill').fillna(0.0))})
-            .assign(**{'Avg Minutes Played Recently To Fixture': lambda df: df.groupby('Player Code')['Fixture Minutes Played'].apply(lambda x: x.shift().rolling(10, min_periods=1).mean()).fillna(0.0)})
-            .assign(**{'Avg Points Opp Points Adj To Fixture': lambda df: df.apply(lambda row: row['Avg Points To Fixture'] * row['Team Total Points Est'] / row['Opp Team Total Points Est'], axis=1).fillna(0.0)}))
 
 
 def calc_eps_for_next_gws(player_gw_eps: DF, ctx: Context) -> S:
