@@ -128,28 +128,37 @@ player_hist,transfers_in,Fixture Transfers In,Total number of participants who b
 player_hist,transfers_out,Fixture Transfers Out,Total number of participants who sold the player before the match.,int,{:.0f}
 fixture,team_a,Away Team ID,ID of the away team for the fixture,int,{:.0f} min
 fixture,team_h,Home Team ID,ID of the home team for the fixture,int,
-fixture,team_a_score,Away Team Score,The goals scored by the away team,int,
-fixture,team_h_score,Home Team Score,The goals scored by the home team,int,
+fixture,team_a_score,Away Team Score,Goals scored by the away team,int,
+fixture,team_h_score,Home Team Score,Goals scored by the home team,int,
 fixture,team_a_difficulty,Away Team FDR,Difficulty score of the away team (1: Easy to 5: Difficult),int,
 fixture,team_h_difficulty,Home Team FDR,Difficulty score of the home team (1: Easy to 5: Difficult),int,
-fixture,event,Game Week,The game week of the fixture (1 to 38),int,
-,,Current Game Week,The current game week for the team.,int,
-fixture,kickoff_time,Kick Off Time,The kick off date and time of the fixture,datetime64,
+fixture,event,Game Week,Game week of the fixture (1 to 38),int,
+,,Current Game Week,Current game week for the team.,int,
+fixture,kickoff_time,Kick Off Time,Kick off date and time of the fixture.,datetime64,
 player,position,Team Position,"Position in the team selection, e.g. 0 is the goal keeper.",int,{:.0f}
-player,multiplier,Point Factor,"The multiplier for calculating the expected points at the team level. This value is 0 for players that are not selected, 2 for the captain and 1 for the rest.",int,
-,,Player Last Updated,The date/time when the data for this player was last loaded from the FPL API.,datetime64,
+player,multiplier,Point Factor,"Multiplier for calculating the expected points at the team level. This value is 0 for players that are not selected, 2 for the captain and 1 for the rest.",int,
+,,Player Last Updated,Date/time when the data for this player was last loaded from the FPL API.,datetime64,
 ,,Fixtures Next GW,"Next fixture of the team, including strength of opposing team.",str,
 ,,Fixtures Next 8 GWs,"Next 8 fixtures of the team, including strengths of opposing teams.",str,
-,,Fixture Last Updated,The date/time when the data for this fixture was last loaded from the FPL API.,datetime64,
-players_history_past,total_points,Season Total Points,The points that the player earned over the whole season.,int,{:.0f}pts
-players_history_past,minutes,Season Minutes,The minutes played over the whole season.,int,{:.0f} min
-players_history_past,ict_index,Season ICT Index,The ICT Index at the end of the season as calculated by Fantasy Premier Leauge,float,{:.1f}
-,,Last Season Total Points,The points that the player earned during the previous season,int,{:.0f}pts
-game_week,id,GW ID,The game week ID. These range from 1 to 38.,int,{:.0f}
-game_week,name,GW Name,"The name of the game week, e.g. Gameweek 1",str,
-game_week,finished,Is GW Finished?,Whether the game week has finished,bool,{:}
-game_week,is_previous,Is Prev GW?, Whether this game week is the game week that has been just completed,bool,{:}
-game_week,is_current,Is Curr GW?, Whether this game week is the current game week,bool,{:}
-game_week,is_next,Is Next GW?, Whether this game week is the next game week,bool,{:}
-game_week,deadline_time,GW Deadline,The deadline for this game week. Changes can be made up to that point but not after.,datetime64,
-,,GW Last Updated,The date/time when the data for this game week was last loaded from the FPL API.,datetime64,
+,,Fixture Last Updated,Date/time when the data for this fixture was last loaded from the FPL API.,datetime64,
+players_history_past,total_points,Season Total Points,Points that the player earned over the whole season.,int,{:.0f}pts
+players_history_past,minutes,Season Minutes,Minutes played over the whole season.,int,{:.0f} min
+players_history_past,ict_index,Season ICT Index,ICT Index at the end of the season as calculated by Fantasy Premier Leauge.,float,{:.1f}
+,,Last Season Total Points,Points that the player earned during the previous season.,int,{:.0f}pts
+game_week,id,GW ID,Game week ID. These range from 1 to 38.,int,{:.0f}
+game_week,name,GW Name,"Name of the game week, e.g. Gameweek 1.",str,
+game_week,finished,Is GW Finished?,Whether the game week has finished.,bool,{:}
+game_week,is_previous,Is Prev GW?,Whether this game week is the game week that has been just completed.,bool,{:}
+game_week,is_current,Is Curr GW?,Whether this game week is the current game week.,bool,{:}
+game_week,is_next,Is Next GW?,Whether this game week is the next game week.,bool,{:}
+game_week,deadline_time,GW Deadline,Deadline for this game week. Changes can be made up to that point but not after.,datetime64,
+game_week,average_entry_score,Average GW Score,Average score for the game week.,int,{:.0f}
+game_week,data_checked,GW Data Checked,Whether the data has been checked for the game week.,int,{:.0f}
+game_week,highest_score,Highest GW Score,Highest score for the game week.,int,{:.0f}
+game_week,chip_plays,GW Chips Played,JSON with info of how many chips were played by type for the game week.,str,
+game_week,most_selected,GW Most Selected Player ID,ID of the player that most managers included in their team for the game week.,int,{:.0f}
+game_week,most_transferred_in,GW Most Transferred In Player ID,ID of the player that most managers transferred into their team for the game week.,int,{:.0f}
+game_week,transfers_made,GW Transfers,Total number of transfers for the game week.,int,{:.0f}
+game_week,most_captained,GW Most Captained Player ID,ID of the player that most managers captained for the game week.,int,{:.0f}
+game_week,most_vice_captained,GW Most Vice Captained Player ID,ID of the player that most managers vice captained for the game week.,int,{:.0f}
+,,GW Last Updated,Date/time when the data for this game week was last loaded from the FPL API.,datetime64,
