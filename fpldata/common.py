@@ -78,3 +78,16 @@ def value_or_default(value, default=np.nan):
     """
     # noinspection PyTypeChecker
     return default if value is None or isinstance(value, str) and value == '' or not isinstance(value, str) and np.isnan(value) else value
+
+
+def is_notebook():
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            return True   # Jupyter notebook or qtconsole
+        elif shell == 'TerminalInteractiveShell':
+            return False  # Terminal running IPython
+        else:
+            return False
+    except NameError:
+        return False
