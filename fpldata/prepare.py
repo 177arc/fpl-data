@@ -6,18 +6,12 @@ import datetime as dt
 import numpy as np
 import pandas as pd
 from typing import Optional, Dict
-from fplpandas import FPLPandas
 from .common import Context
 import collections
 
 # Define type aliases
 DF = pd.DataFrame
 S = pd.Series
-
-
-def get_game_weeks(fpl: FPLPandas, ctx: Context) -> DF:
-    # noinspection PyTypeChecker
-    return fpl.get_game_weeks().pipe(prepare_game_weeks, ctx)
 
 
 def get_next_gw_name(next_gw: int, ctx: Context) -> str:
@@ -118,6 +112,7 @@ def prepare_fixtures(fixtures_raw: DF, team_id_code_map: S, ctx: Context) -> DF:
 def prepare_game_weeks(game_week_raw: DF, ctx: Context) -> DF:
     return (game_week_raw
             .pipe(ctx.dd.remap, 'game_week')
+            .pipe(ctx.dd.strip_cols, 'game_week')
             .rename_axis('GW ID')
             .assign(**{'GW Last Updated': dt.datetime.now()}))
 
