@@ -338,8 +338,6 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
             .sort_values(['Player Code', 'Kick Off Time'])
             .set_index(['Player Code', 'Fixture Code'])
             .assign(**{'Fixture Played': lambda df: df['Fixture Minutes Played'] > 0})
-            .assign(**{'Rolling Avg Game Points': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
-                    .where((df['Season'] == ctx.current_season) & (df['Game Week'] < ctx.next_gw) | (df['Season'] != ctx.current_season))})
             .assign(**{'Total Points To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Total Points', ctx).ffill()})
             .assign(**{'Fixtures Played To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Played', ctx).ffill()})
             .assign(**{'Stats Completeness Percent': lambda df: df['Fixtures Played To Fixture'] / ctx.player_fixtures_look_back * 100})
@@ -350,6 +348,11 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
                                                                    np.where(df['Field Position'].isin(['FWD', 'MID']),
                                                                             df['Rel Opp Avg Team Goals Conceded Home To Fixture'].fillna(1),
                                                                             1 / (df['Rel Opp Avg Team Goals Scored Home To Fixture'].fillna(1))))})
+            .assign(**{'Adj Fixture Total Points': lambda df: df['Fixture Total Points']/df['Rel Fixture Strength']})
+            .assign(**{'Rolling Avg Game Points': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
+                    .where((df['Season'] == ctx.current_season) & (df['Game Week'] < ctx.next_gw) | (df['Season'] != ctx.current_season))})
+            .assign(**{'Rolling Avg Adj Game Points': lambda df: df.groupby('Player Code')['Adj Fixture Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
+                    .where((df['Season'] == ctx.current_season) & (df['Game Week'] < ctx.next_gw) | (df['Season'] != ctx.current_season))})
             .drop(columns=['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Played']))
 
 
@@ -381,22 +384,6 @@ def calc_eps_for_next_gws(player_gw_eps: DF, ctx: Context) -> S:
             row['Fixtures ' + next_gw_post_fix] = value_or_default(future_df['Fixture Short Name FDR'].str.cat(sep=', '))
 
     return row
-
-
-def calc_eps(player_fixture_stats: pd.DataFrame, ctx: Context) -> pd.Series:
-    """
-    Calculates the expected points for each fixture based on past player points and relative fixture strength. It uses estimates from the last
-    season to compensate for lack of evidence in early game weeks.
-
-    Args:
-        player_fixture_stats: A data frame with the pre-calculated stats indexed by player ID and fixture ID.
-        ctx: Context data, such as the next game week, the current season, the data dictionary, etc.
-
-    Returns: Returns the expected points for each player/fixture combination as a series.
-    """
-    return ((phase_over(player_fixture_stats['Last Season Total Points Est'], player_fixture_stats['Total Points To Fixture'], ctx.next_gw, 0.2)
-             / phase_over(player_fixture_stats['Last Season GWs Est'], player_fixture_stats['Fixtures Played To Fixture'], ctx.next_gw, 0.2)).fillna(player_fixture_stats['Total Points To Fixture'])
-            * player_fixture_stats['Rel. Fixture Strength'] / player_fixture_stats['Rel. Fixture Strength To Fixture'].fillna(method='ffill').fillna(1))
 
 
 def est_chance_avail(df: DF) -> S:
