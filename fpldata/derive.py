@@ -531,12 +531,11 @@ def get_players_gw_team_eps(players_fixture_team_eps: DF, player_teams: DF) -> D
     return (players_fixture_team_eps
             .drop(columns=['Field Position', 'Name', 'Team ID', 'Team Short Name', 'Team Name', 'Team Strength', 'Player Team Code', 'Chance Avail Next GW', 'Team Last Updated'])
             .pipe(proj_to_gw)
-            .merge(player_teams, left_on='Player Code', right_index=True, suffixes=(None, None)))
+            .merge(player_teams.drop(columns=['Season']), left_on='Player Code', right_index=True, suffixes=(None, None)))
 
 
 def get_player_gw_next_eps(players_gw_team_eps: DF, ctx: Context) -> DF:
     return (players_gw_team_eps[lambda df: df.index.get_level_values('Season') == ctx.current_season]
-            .drop(columns=['Season'])
             .reset_index()
             [lambda df: (df['Game Week'] >= ctx.next_gw) & (df['Season'] == ctx.current_season)]
             .sort_values(['Season', 'Game Week'])
