@@ -45,7 +45,7 @@ def prepare_players(players_raw: pd.DataFrame, ctx: Context) -> pd.DataFrame:
             .pipe(ctx.dd.remap, data_set='player')
             .pipe(ctx.dd.strip_cols, data_set='player')
             .assign(**{'ICT Index': lambda df: pd.to_numeric(df['ICT Index'])})
-            .assign(**{'Field Position': lambda df: df['Field Position Code'].map(lambda x: ctx.position_by_type[x])})
+            .assign(**{'Field Position': lambda df: df['Field Position Code'].map(lambda x: ctx.POSITION_BY_TYPE[x])})
             .assign(**{'Current Cost': lambda df: df['Current Cost x10'] / 10})
             .assign(**{'Minutes Percent': lambda df: df['Minutes Played'] / df['Minutes Played'].max() * 100 if ctx.next_gw > 1 else 0})
             .assign(**{'News And Date': lambda df: df.apply(lambda row: get_news(row), axis=1)})
@@ -140,7 +140,7 @@ def load_team_goal_stats_est(file_path: str, ctx: Context) -> DF:
     # Loads estimates for team for which no history is available, in particular for those that have been promoted to the Premier League.
     team_goal_stats_estimates = pd.read_csv(file_path).set_index('Team Code')
 
-    for stats_type in ctx.stats_types:
+    for stats_type in ctx.STATS_TYPES:
         team_goal_stats_estimates = team_goal_stats_estimates.assign(
             **{f'Total Team {stats_type}~': lambda df: df[f'Total Team {stats_type} Home~'] + df[f'Total Team {stats_type} Away~']})
 
