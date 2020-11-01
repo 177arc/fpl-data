@@ -13,10 +13,10 @@ S = pd.Series
 
 
 class Context:
-    position_by_type: dict = {1: 'GK', 2: 'DEF', 3: 'MID', 4: 'FWD'}
-    fixture_types: list = ['Home', 'Away', '']
-    stats_types: list = ['Goals Scored', 'Goals Conceded', 'Clean Sheets']
-    fixture_stats_types: list = [stats_types, fixture_types]
+    POSITION_BY_TYPE: dict = {1: 'GK', 2: 'DEF', 3: 'MID', 4: 'FWD'}
+    FIXTURE_TYPES: list = ['Home', 'Away', '']
+    STATS_TYPES: list = ['Goals Scored', 'Goals Conceded']
+    FIXTURE_STATS_TYPES: list = [STATS_TYPES, FIXTURE_TYPES]
 
     total_gws: int                      # The number game weeks in a season.
     next_gw: int                        # The upcoming game week.
