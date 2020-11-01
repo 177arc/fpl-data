@@ -42,4 +42,4 @@ def add_data_sets_stats(data_sets: DF, dfs: dict) -> DF:
 
 def export_data_sets(data_sets: DF, data_dir: str, data_sets_file: str) -> None:
     Path(data_dir).mkdir(parents=True, exist_ok=True)
-    data_sets.to_csv(f'{data_dir}/{data_sets_file.split(".")[0]}_v{VERSION}', date_format=DATA_EXPORT_FORMAT)
+    data_sets.to_csv(f'{data_dir}/{data_sets_file.split(".")[0]}_v{VERSION}.{data_sets_file.split(".")[1]}', date_format=DATA_EXPORT_FORMAT)
