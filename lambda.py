@@ -1,9 +1,12 @@
 import logging
+import sys
+from importlib import reload, import_module
 
 def run_handler(event, context):
     logging.info(f'Executing handler for event {event} and context {context} ...')
 
     # Execute script generated from notebook
+    if 'prep_data' in sys.modules: del sys.modules['prep_data']
     import prep_data
 
 if __name__ == "__main__":
