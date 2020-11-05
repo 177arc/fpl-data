@@ -154,7 +154,6 @@ def phase_over(n1: float, n2: float, gw: int, speed: float = 0.2):
     weight = np.tanh((gw - 1) * speed)
     return (1 - weight) * n1 + weight * n2
 
-
 def add_fixtures_ago(team_fixtures: DF) -> DF:
     return (team_fixtures
             .sort_values(['Fixture Code', 'Kick Off Time'], ascending=False)
@@ -199,18 +198,19 @@ def calc_team_score_stats(team_fixture_scores: pd.DataFrame) -> pd.DataFrame:
 
 
 def fill_team_goal_stats_est(team_stats: DF, team_goal_stats_est: DF, ctx: Context) -> DF:
-    team_stats = team_stats.merge(team_goal_stats_est,
+    team_stats = team_stats.merge(team_goal_stats_est.drop(columns=['Team Short Name']),
                                   left_index=True, right_index=True, how='left', suffixes=(None, None))
 
-    for stat_type in itertools.product(*ctx.fixture_stats_types):
+    for stat_type in itertools.product(*ctx.FIXTURE_STATS_TYPES):
         post_fix = ' '.join(stat_type).strip()
         fixture_type = (" " + stat_type[1]).rstrip()
         team_stats = (team_stats.assign(
-                        **{f'Avg Team {post_fix}':
-                            lambda df: (df[f'Total Team {post_fix}']
-                                        + (ctx.fixtures_look_back / 2 - df[f'Team Fixture Count{fixture_type}']) * df[f'Total Team {post_fix}~'].fillna(1))
-                                        / (df[f'Team Fixture Count{fixture_type}']
-                                        + (ctx.fixtures_look_back / 2 - df[f'Team Fixture Count{fixture_type}']) * df[f'Team Fixture Count{fixture_type}~'].fillna(1))}))
+                        **{f'_Avg Team {post_fix}':
+                            lambda df: df[f'Total Team {post_fix}']/df[f'Team Fixture Count{fixture_type}']
+                                           *(df[f'Team Fixture Count{fixture_type}']/df[f'Team Fixture Count{fixture_type}~']).fillna(1)
+                                        + (df[f'Total Team {post_fix}~']/df[f'Team Fixture Count{fixture_type}~']
+                                           *(np.max(df[f'Team Fixture Count{fixture_type}~']-df[f'Team Fixture Count{fixture_type}'], 0)/df[f'Team Fixture Count{fixture_type}~'])).fillna(0)
+                          }))
 
     # Remove estimate columns
     team_stats = (team_stats
@@ -218,16 +218,6 @@ def fill_team_goal_stats_est(team_stats: DF, team_goal_stats_est: DF, ctx: Conte
                   .drop(columns=[col for col in team_stats.columns if col[:1] == '~']))
 
     return team_stats
-
-
-def get_team_score_stats(fixture_teams: DF, teams: DF, team_goal_stats_est: DF, ctx: Context) -> DF:
-    return (fixture_teams
-            [fixture_teams['Finished']]
-            .pipe(get_team_fixture_scores, teams)
-            .pipe(add_fixtures_ago)
-            [lambda df: df['Fixtures Ago'] <= ctx.fixtures_look_back]
-            .pipe(calc_team_score_stats)
-            .pipe(fill_team_goal_stats_est, team_goal_stats_est, ctx))
 
 
 def get_team_fixture_scores(fixture_teams: DF, teams: DF) -> DF:
@@ -260,8 +250,18 @@ def get_team_fixture_scores(fixture_teams: DF, teams: DF) -> DF:
             .merge(teams, left_on='Team Code', right_on='Team Code'))
 
 
-def get_fixture_teams_stats(fixture_teams: DF, team_score_stats: DF, ctx: Context) -> DF:
-    fixture_team_stats_cols = [f'Avg Team {" ".join(stat_type).strip()}' for stat_type in itertools.product(*ctx.fixture_stats_types)] + ['Team Fixture Count Home', 'Team Fixture Count Away', 'Team Fixture Count', 'Team Stats Quality']
+def get_team_goal_stats(fixture_teams: DF, teams: DF, team_goal_stats_est: DF, ctx: Context) -> DF:
+    return (fixture_teams
+            [fixture_teams['Finished']]
+            .pipe(get_team_fixture_scores, teams)
+            .pipe(add_fixtures_ago)
+            [lambda df: df['Fixtures Ago'] <= ctx.fixtures_look_back]
+            .pipe(calc_team_score_stats)
+            .pipe(fill_team_goal_stats_est, team_goal_stats_est, ctx))
+
+
+def get_fixture_goal_stats(fixture_teams: DF, team_score_stats: DF, ctx: Context) -> DF:
+    fixture_team_stats_cols = [f'_Avg Team {" ".join(stat_type).strip()}' for stat_type in itertools.product(*ctx.FIXTURE_STATS_TYPES)] + ['Team Fixture Count Home', 'Team Fixture Count Away', 'Team Fixture Count', 'Team Stats Quality']
 
     return (fixture_teams
             .merge(team_score_stats[fixture_team_stats_cols].rename(columns=lambda col: col.replace('Team ', 'Home Team ')),
@@ -272,31 +272,37 @@ def get_fixture_teams_stats(fixture_teams: DF, team_score_stats: DF, ctx: Contex
             .set_index('Fixture Code'))
 
 
-def add_team_cols(team_fixture_strength: DF) -> DF:
+def add_team_cols(team_fixture_strength: DF, ctx: Context) -> DF:
     for col in team_fixture_strength.columns:
         if 'Away ' in col:
             away_col = col
             home_col = col.replace('Away ', 'Home ')
+            col_prefix = ctx.LOCAL_COL_PREFIX if col.startswith(ctx.LOCAL_COL_PREFIX) else ''
 
             team_fixture_strength = (team_fixture_strength
                                      .assign(**{away_col.replace('Away ', ''): lambda df: np.where(df['Is Home?'], df[home_col], df[away_col])})
-                                     .assign(**{'Opp ' + away_col.replace('Away ', ''): lambda df: np.where(~df['Is Home?'], df[home_col], df[away_col])})
+                                     .assign(**{col_prefix+'Opp '+away_col.replace('Away ', '').replace(ctx.LOCAL_COL_PREFIX, ''): lambda df: np.where(~df['Is Home?'], df[home_col], df[away_col])})
                                      .drop(columns=[away_col, home_col]))
 
     return team_fixture_strength
 
 
-def add_fixture_stats(player_fixtures: DF, ctx: Context) -> DF:
-    for stat_type in itertools.product(*ctx.fixture_stats_types):
+def add_fixture_stats(fixture_teams_stats: DF, ctx: Context) -> DF:
+    for stat_type in itertools.product(*ctx.FIXTURE_STATS_TYPES):
         post_fix = ' '.join(stat_type).strip()
-        player_fixtures = (player_fixtures
+        fixture_teams_stats = (fixture_teams_stats
                            .sort_values(['Season', 'Game Week'])
                            .assign(
-                                **{f'Avg Opp Avg Team {post_fix} To Fixture': lambda df: df.groupby('Team Code')[f'Opp Avg Team {post_fix}'].apply(lambda x: x.shift().rolling(ctx.player_fixtures_look_back, min_periods=1).mean()).fillna(0)})
-                           .assign(**{f'Rel Opp Avg Team {post_fix} To Fixture': lambda df: np.where(df[f'Avg Opp Avg Team {post_fix} To Fixture'] > 0, df[f'Opp Avg Team {post_fix}'] / df[f'Avg Opp Avg Team {post_fix} To Fixture'], 1)}))
+                                **{f'_Avg Opp Avg Team {post_fix} To Fixture': lambda df: df.groupby('Team Code')[f'_Opp Avg Team {post_fix}'].apply(lambda x: x.shift().rolling(ctx.player_fixtures_look_back, min_periods=1).mean()).fillna(0)})
+                           .assign(**{f'_Rel Opp Avg Team {post_fix} To Fixture': lambda df: np.where(df[f'_Avg Opp Avg Team {post_fix} To Fixture'] > 0, df[f'_Opp Avg Team {post_fix}'] / df[f'_Avg Opp Avg Team {post_fix} To Fixture'], 1)}))
 
-    return player_fixtures
-
+    return (fixture_teams_stats
+        .assign(**{'_Rel Att Fixture Strength Home': lambda df: df['_Rel Opp Avg Team Goals Conceded Away To Fixture'].fillna(1)})
+        .assign(**{'_Rel Att Fixture Strength Away': lambda df: df['_Rel Opp Avg Team Goals Conceded Home To Fixture'].fillna(1)})
+        .assign(**{'_Rel Def Fixture Strength Home': lambda df: 1 / (df['_Rel Opp Avg Team Goals Scored Away To Fixture'].fillna(1))})
+        .assign(**{'_Rel Def Fixture Strength Away': lambda df: 1 / (df['_Rel Opp Avg Team Goals Scored Home To Fixture'].fillna(1))})
+        .assign(**{'_Rel Clean Sheet Fixture Strength Home': lambda df: 1 / (df['_Rel Opp Avg Team Clean Sheets Away To Fixture'].fillna(1))})
+        .assign(**{'_Rel Clean Sheet Fixture Strength Away': lambda df: 1 / (df['_Rel Opp Avg Team Clean Sheets Home To Fixture'].fillna(1))}))
 
 def get_team_fixture_strength(fixture_teams_stats: DF, teams: DF, ctx: Context) -> DF:
     stats_cols = [col for col in fixture_teams_stats.columns if 'Avg' in col or 'Count' in col or 'FDR' in col or 'Quality' in col]
@@ -313,7 +319,7 @@ def get_team_fixture_strength(fixture_teams_stats: DF, teams: DF, ctx: Context) 
             .assign(**{'Is Home?': (lambda df: df['Home Team Code'] == df['Team Code'])})
             .assign(**{'Opp Team Code': lambda df: np.where(df['Is Home?'], df['Away Team Code'], df['Home Team Code'])})
             .drop(columns=['Home Team Code', 'Away Team Code'])
-            .pipe(add_team_cols)
+            .pipe(add_team_cols, ctx)
             .pipe(add_fixture_stats, ctx)
             .assign(**{'Fixture Short Name FDR': lambda df: df['Fixture Short Name'] + ' (' + df['Team FDR'].astype('str') + ')'})
             .merge(teams, left_on='Team Code', right_on='Team Code', suffixes=(None, None))
@@ -327,33 +333,55 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
     def roll_sum_back(df: DF, group_by: str, col: str, ctx: Context):
         return (df.groupby(group_by)
                 [col]
-                .apply(lambda x: x.shift().rolling(ctx.player_fixtures_look_back, min_periods=1).sum())
+                .shift().rolling(ctx.player_fixtures_look_back, min_periods=1).sum().fillna(0)
                 .where((df['Season'] == ctx.current_season) & (df['Game Week'] <= ctx.next_gw) | (df['Season'] != ctx.current_season)))
 
     return (players[['Name', 'Player Team Code', 'Field Position']]
             .reset_index()
             .merge(team_fixture_strength, left_on='Player Team Code', right_index=True, suffixes=(False, False))
-            .merge(players_history[['Fixture Minutes Played', 'Fixture Total Points']],
+            .merge(players_history[['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Goals Scored', 'Fixture Assists', 'Fixture Goals Conceded',
+                                    'Fixture Own Goals', 'Fixture Penalties Missed', 'Fixture Yellow Cards',
+                                   'Fixture Red Cards', 'Fixture Bonus Points', 'Fixture Saves', 'Fixture Clean Sheets',
+                                   'Fixture Penalties Saved']],
                    left_on=['Player Code', 'Fixture Code'], right_index=True, how='left', suffixes=(False, False))
             .sort_values(['Player Code', 'Kick Off Time'])
             .set_index(['Player Code', 'Fixture Code'])
             .assign(**{'Fixture Played': lambda df: df['Fixture Minutes Played'] > 0})
+            .assign(**{'Fixture Minutes >60 Played': lambda df: df['Fixture Minutes Played'] > 60})
+            .assign(**{'Fixture Minutes <60 Played': lambda df: (df['Fixture Minutes Played'] < 60) & (df['Fixture Minutes Played'] > 0)})
+            .assign(**{'Fixture Goals Conceded Multiples': lambda df: np.floor(df['Fixture Goals Conceded']/2)})
+            .assign(**{'Fixture Saves Multiples': lambda df: np.floor(df['Fixture Saves']/3)})
+            .assign(**{'Fixture Played': lambda df: df['Fixture Minutes Played'] > 0})
             .assign(**{'Total Points To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Total Points', ctx).ffill()})
             .assign(**{'Fixtures Played To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Played', ctx).ffill()})
+            .assign(**{'_Minutes >60 Played To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Minutes >60 Played', ctx).ffill()})
+            .assign(**{'_Minutes <60 Played To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Minutes <60 Played', ctx).ffill()})
+            .assign(**{'_Minutes Played To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Minutes Played', ctx).ffill()})
+            .assign(**{'_Goals Scored To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Goals Scored', ctx).ffill()})
+            .assign(**{'_Assists To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Assists', ctx).ffill()})
+            .assign(**{'_Own Goals To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Own Goals', ctx).ffill()})
+            .assign(**{'_Penalties Missed To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Penalties Missed', ctx).ffill()})
+            .assign(**{'_Yellow Cards To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Yellow Cards', ctx).ffill()})
+            .assign(**{'_Red Cards To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Red Cards', ctx).ffill()})
+            .assign(**{'_Bonus Points To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Bonus Points', ctx).ffill()})
+            .assign(**{'_Saves Multiples To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Saves Multiples', ctx).ffill()})
+            .assign(**{'_Goals Conceded Multiples To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Goals Conceded Multiples', ctx).ffill()})
+            .assign(**{'_Clean Sheets To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Clean Sheets', ctx).ffill()})
+            .assign(**{'_Penalties Saved To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Penalties Saved', ctx).ffill()})
+            .assign(**{'_Rel Att Strength': lambda df: np.where(df['Is Home?'],
+                                                                df['_Rel Att Fixture Strength Home'],
+                                                                df['_Rel Att Fixture Strength Away'])})
+            .assign(**{'_Rel Def Strength': lambda df: np.where(df['Is Home?'],
+                                                                df['_Rel Def Fixture Strength Home'],
+                                                                df['_Rel Def Fixture Strength Away'])})
+            .assign(**{'_Rel Clean Sheet Strength': lambda df: np.where(df['Is Home?'],
+                                                                        df['_Rel Clean Sheet Fixture Strength Home'],
+                                                                        df['_Rel Clean Sheet Fixture Strength Away'])})
             .assign(**{'Stats Completeness Percent': lambda df: df['Fixtures Played To Fixture'] / ctx.player_fixtures_look_back * 100})
-            .assign(**{'Rel Fixture Strength': lambda df: np.where(df['Is Home?'],
-                                                                   np.where(df['Field Position'].isin(['FWD', 'MID']),
-                                                                            df['Rel Opp Avg Team Goals Conceded Away To Fixture'].fillna(1),
-                                                                            1 / df['Rel Opp Avg Team Goals Scored Away To Fixture'].fillna(1)),
-                                                                   np.where(df['Field Position'].isin(['FWD', 'MID']),
-                                                                            df['Rel Opp Avg Team Goals Conceded Home To Fixture'].fillna(1),
-                                                                            1 / (df['Rel Opp Avg Team Goals Scored Home To Fixture'].fillna(1))))})
-            .assign(**{'Adj Fixture Total Points': lambda df: df['Fixture Total Points']/df['Rel Fixture Strength']})
             .assign(**{'Rolling Avg Game Points': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
                     .where((df['Season'] == ctx.current_season) & (df['Game Week'] < ctx.next_gw) | (df['Season'] != ctx.current_season))})
-            .assign(**{'Rolling Avg Adj Game Points': lambda df: df.groupby('Player Code')['Adj Fixture Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
-                    .where((df['Season'] == ctx.current_season) & (df['Game Week'] < ctx.next_gw) | (df['Season'] != ctx.current_season))})
-            .drop(columns=['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Played']))
+            .drop(columns=['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Played'])
+           )
 
 
 def calc_eps_for_next_gws(player_gw_eps: DF, ctx: Context) -> S:
@@ -439,8 +467,78 @@ def calc_eps_ext(player_fixture_stats: pd.DataFrame) -> np.ndarray:
 
     """
 
-    return np.where(player_fixture_stats['Fixtures Played To Fixture'] > 0, (player_fixture_stats['Total Points To Fixture'] / player_fixture_stats['Fixtures Played To Fixture'])
-                    * player_fixture_stats['Rel Fixture Strength'], 0)
+    # Defines points given for each action (see https://fantasy.premierleague.com/help/rules)
+    MIN_SHORT_POINTS = 1
+    MIN_LONG_POINTS = 2
+    DEF_GOAL_POINTS = 6
+    MID_GOAL_POINTS = 5
+    FWD_GOAL_POINTS = 4
+    ASSIST_POINTS = 3
+    PEN_MISS_POINTS = -2
+    GOAL_CONCEDED_POINTS = -1
+    DEF_CLEAN_POINTS = 4
+    MID_CLEAN_POINTS = 1
+    FWD_CLEAN_POINTS = 0
+    SAVES_POINTS = 1
+    PEN_SAVE_POINTS = 5
+    YELLOW_CARD_POINTS = -1
+    RED_CARD_POINTS = -3
+    OWN_GOAL_POINTS = -2
+
+    df = player_fixture_stats
+
+    return np.where(df['Fixtures Played To Fixture'] > 0,
+        (   # Attacking related points
+            ((np.where(df['Field Position'].isin(['GK', 'DEF']), DEF_GOAL_POINTS, 0)
+               + np.where(df['Field Position'].isin(['MID']), MID_GOAL_POINTS, 0)
+               + np.where(df['Field Position'].isin(['FWD']), FWD_GOAL_POINTS, 0))
+             * df['_Goals Scored To Fixture'].fillna(0)
+              + ASSIST_POINTS * df['_Assists To Fixture'].fillna(0))
+             * df['_Rel Att Strength'].fillna(1)
+
+             # Defensive points
+             + np.where(df['Field Position'].isin(['GK', 'DEF']), GOAL_CONCEDED_POINTS, 0)
+                * df['_Goals Conceded Multiples To Fixture'].fillna(0)
+             + OWN_GOAL_POINTS * df['_Own Goals To Fixture'].fillna(0)
+             / df['_Rel Def Strength'].fillna(1)
+
+             # Clean sheet points
+             + (np.where(df['Field Position'].isin(['GK', 'DEF']), DEF_CLEAN_POINTS, 0)
+                + np.where(df['Field Position'].isin(['MID']), MID_CLEAN_POINTS, 0)
+                + np.where(df['Field Position'].isin(['FWD']), FWD_CLEAN_POINTS, 0))
+             * df['_Clean Sheets To Fixture'].fillna(0)
+             * df['_Rel Def Strength'].fillna(1)
+
+             # Other points
+            + PEN_MISS_POINTS * df['_Penalties Missed To Fixture'].fillna(0)
+            + SAVES_POINTS * df['_Saves Multiples To Fixture'].fillna(0)
+            + PEN_SAVE_POINTS * df['_Penalties Saved To Fixture'].fillna(0)
+            + df['_Bonus Points To Fixture'].fillna(0)
+            + YELLOW_CARD_POINTS * df['_Yellow Cards To Fixture'].fillna(0)
+            + RED_CARD_POINTS * df['_Red Cards To Fixture'].fillna(0)
+            + df['_Minutes >60 Played To Fixture']*MIN_LONG_POINTS+df['_Minutes <60 Played To Fixture']*MIN_SHORT_POINTS)
+            / df['Fixtures Played To Fixture'],
+        0)
+
+
+def calc_eps_ext_simple(player_fixture_stats: pd.DataFrame) -> np.ndarray:
+    """
+    Calculates the expected points for each fixture based on past player points, position and relative fixture strength.
+
+    Args:
+        player_fixture_stats: A data frame with the pre-calculated stats indexed by player ID and fixture ID.
+
+    Returns: Returns the expected points for each player/fixture combination as a series.
+
+    """
+    return np.where(player_fixture_stats['Fixtures Played To Fixture'] > 0, player_fixture_stats['Total Points To Fixture'] / player_fixture_stats['Fixtures Played To Fixture'], 0)
+
+
+def get_players_fixture_team_eps(player_fixture_stats: DF) -> DF:
+    return (player_fixture_stats
+            .assign(**{'Expected Points': lambda df: df.pipe(calc_eps_ext)})
+            .assign(**{'Expected Points Simple': lambda df: df.pipe(calc_eps_ext_simple)}))
+
 
 
 def calc_eps_ext_simple(player_fixture_stats: pd.DataFrame) -> np.ndarray:
@@ -454,12 +552,6 @@ def calc_eps_ext_simple(player_fixture_stats: pd.DataFrame) -> np.ndarray:
 
     """
     return np.where(player_fixture_stats['Fixtures Played To Fixture'], player_fixture_stats['Total Points To Fixture'] / player_fixture_stats['Fixtures Played To Fixture'], 0)
-
-
-def get_players_fixture_team_eps(player_fixture_stats: DF) -> DF:
-    return (player_fixture_stats
-            .assign(**{'Expected Points': lambda df: df.pipe(calc_eps_ext)})
-            .assign(**{'Expected Points Simple': lambda df: df.pipe(calc_eps_ext_simple)}))
 
 
 def proj_to_gw(players_fixture_team_eps: DF) -> DF:

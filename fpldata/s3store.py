@@ -96,7 +96,7 @@ class S3Store():
         Args:
             source_dir: The directory that contains the files to save.
             key_name: The name of the S3 object. If the key name ends in '.zip', the directory will be uploaded as a zip archive.
-                Otherwise, the files will be uploaded as separate gzip files.
+                Otherwise, the files will be uploaded as separate gzip files and the key name will be treated as pre-fix for the uploaded files.
         """
         if self.__is_zip(key_name):
             zip_buffer = BytesIO()

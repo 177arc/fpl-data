@@ -18,8 +18,9 @@ def add_gws_ago(players_gw_team: DF) -> DF:
 
 def get_gw_points_backtest(players_gw_team_eps: DF, ctx: Context) -> DF:
     return (players_gw_team_eps
-         [lambda df: df['Fixture Minutes Played'] > 0]
          .reset_index()
+         [lambda df: (df['Fixture Minutes Played'] > 0) & (df['Fixtures Played To Fixture'] > 4) &
+              ((df['Season'] == ctx.current_season) & (df['Game Week'] < ctx.next_gw) | (df['Season'] != ctx.current_season))]
          .groupby(['Season', 'Game Week'])
          [['Expected Points', 'Expected Points Simple', 'Fixture Total Points', 'Player Code']]
          .agg({'Expected Points': 'sum', 'Expected Points Simple': 'sum', 'Fixture Total Points': 'sum', 'Player Code': 'count'})
