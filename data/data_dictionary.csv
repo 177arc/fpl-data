@@ -141,6 +141,7 @@ player,multiplier,Point Factor,"Multiplier for calculating the expected points a
 ,,Fixtures Next GW,"Next fixture of the team, including strength of opposing team.",str,
 ,,Fixtures Next 8 GWs,"Next 8 fixtures of the team, including strengths of opposing teams.",str,
 ,,Fixture Last Updated,Date/time when the data for this fixture was last loaded from the FPL API.,datetime64,
+,,Expected Points Next GW,Points that the player is expected to earn in the upcoming game week.,,
 players_history_past,total_points,Season Total Points,Points that the player earned over the whole season.,int,{:.0f}pts
 players_history_past,minutes,Season Minutes,Minutes played over the whole season.,int,{:.0f} min
 players_history_past,ict_index,Season ICT Index,ICT Index at the end of the season as calculated by Fantasy Premier Leauge.,float,{:.1f}
