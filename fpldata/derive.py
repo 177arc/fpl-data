@@ -154,6 +154,7 @@ def phase_over(n1: float, n2: float, gw: int, speed: float = 0.2):
     weight = np.tanh((gw - 1) * speed)
     return (1 - weight) * n1 + weight * n2
 
+
 def add_fixtures_ago(team_fixtures: DF) -> DF:
     return (team_fixtures
             .sort_values(['Fixture Code', 'Kick Off Time'], ascending=False)
@@ -302,7 +303,12 @@ def add_fixture_stats(fixture_teams_stats: DF, ctx: Context) -> DF:
         .assign(**{'_Rel Def Fixture Strength Home': lambda df: 1 / (df['_Rel Opp Avg Team Goals Scored Away To Fixture'].fillna(1))})
         .assign(**{'_Rel Def Fixture Strength Away': lambda df: 1 / (df['_Rel Opp Avg Team Goals Scored Home To Fixture'].fillna(1))})
         .assign(**{'_Rel Clean Sheet Fixture Strength Home': lambda df: 1 / (df['_Rel Opp Avg Team Clean Sheets Away To Fixture'].fillna(1))})
-        .assign(**{'_Rel Clean Sheet Fixture Strength Away': lambda df: 1 / (df['_Rel Opp Avg Team Clean Sheets Home To Fixture'].fillna(1))}))
+        .assign(**{'_Rel Clean Sheet Fixture Strength Away': lambda df: 1 / (df['_Rel Opp Avg Team Clean Sheets Home To Fixture'].fillna(1))})
+        .assign(**{'Rel Att Fixture Strength': lambda df: df['_Rel Opp Avg Team Goals Conceded To Fixture'].fillna(1)})
+        .assign(**{'Rel Def Fixture Strength': lambda df: 1 / df['_Rel Opp Avg Team Goals Scored To Fixture'].fillna(1)})
+        .assign(**{'Expected Goals For': lambda df: df['_Avg Opp Avg Team Goals Conceded To Fixture']})
+        .assign(**{'Expected Goals Against': lambda df: df['_Avg Opp Avg Team Goals Scored To Fixture']}))
+
 
 def get_team_fixture_strength(fixture_teams_stats: DF, teams: DF, ctx: Context) -> DF:
     stats_cols = [col for col in fixture_teams_stats.columns if 'Avg' in col or 'Count' in col or 'FDR' in col or 'Quality' in col]
@@ -537,7 +543,9 @@ def calc_eps_ext_simple(player_fixture_stats: pd.DataFrame) -> np.ndarray:
 def get_players_fixture_team_eps(player_fixture_stats: DF) -> DF:
     return (player_fixture_stats
             .assign(**{'Expected Points': lambda df: df.pipe(calc_eps_ext)})
-            .assign(**{'Expected Points Simple': lambda df: df.pipe(calc_eps_ext_simple)}))
+            .assign(**{'Expected Points Simple': lambda df: df.pipe(calc_eps_ext_simple)})
+            .assign(**{'Rel Strength': lambda df: df['Expected Points']/df['Expected Points Simple'] })
+            )
 
 
 
@@ -556,7 +564,7 @@ def calc_eps_ext_simple(player_fixture_stats: pd.DataFrame) -> np.ndarray:
 
 def proj_to_gw(players_fixture_team_eps: DF) -> DF:
     def proj_to_gw_func(col: S):
-        if col.name in ('Fixture Total Points', 'Fixture Minutes Played') or col.name.startswith('Expected Points'):
+        if col.name in ('Fixture Total Points', 'Fixture Minutes Played') or col.name.startswith('Expected'):
             return 'sum'
 
         if col.name == 'Fixture Short Name FDR':

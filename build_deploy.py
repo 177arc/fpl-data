@@ -42,7 +42,7 @@ def zip_dir(path: str, zip_file: str, incl_regex: str = '.*') -> None:
         for root, dirs, files in os.walk(path):
             for file in files:
                 file_path = f'{root}/{file}'
-                if re.match(incl_regex, file_path):
+                if re.match(incl_regex, file):
                     zf.write(file_path)
 
 
@@ -78,7 +78,7 @@ def deploy(function_name: str = 'fpl-data-test'):
         os.remove(DEPLOY_ZIP_PATH)
 
     log.info(f'Creating deployment package {DEPLOY_ZIP_PATH} ...')
-    zip_dir('.', DEPLOY_ZIP_PATH, r'^\.[\/\\]([^\/\\]*|20.*)(\.py|\.ipynb|\.csv)$')
+    zip_dir('.', DEPLOY_ZIP_PATH, r'.*(\.py|\.ipynb|\.csv)$')
 
     session = boto3.Session(profile_name='fpl-data-ci', region_name='eu-west-2')
     lmda = session.client('lambda')

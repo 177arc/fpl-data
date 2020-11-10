@@ -22,7 +22,7 @@ class TestS3Store(unittest.TestCase):
     Tests the class that persists data frames to S3. To be able to execute these integration tests,
     you need:
         a) an AWS account
-        b) test bucket (Note you will need to update the test_s3_bucket variable accordingly)
+        b) test BUCKET (Note you will need to update the test_s3_bucket variable accordingly)
         c) your AWS keys locally (see https://docs.aws.amazon.com/AmazonS3/latest/dev/setup-aws-cli.html)
     """
 

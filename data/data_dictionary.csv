@@ -113,7 +113,7 @@ player_hist,assists,Fixture Assists,Number of assists to goals by the player dur
 player_hist,clean_sheets,Fixture Clean Sheets,"Number of clean sheets that the player was awared during the match. Note that if a player does not play during a fixture with a clean sheet, the clean sheet count for this player will not increase.",int,{:.0f}
 player_hist,goals_conceded,Fixture Goals Conceded,Number of goals conceded while the player was playing during the match.,int,{:.0f}
 player_hist,own_goals,Fixture Own Goals,Number of own goals scored by the player during the match.,int,{:.0f}
-player_hist,"penalties_saved	",Fixture Penalties Saved,Number of penalties saved by the player during the match.,int,{:.0f}
+player_hist,penalties_saved,Fixture Penalties Saved,Number of penalties saved by the player during the match.,int,{:.0f}
 player_hist,penalties_missed,Fixture Penalties Missed,Number of penalties missed by the player during the match.,int,{:.0f}
 player_hist,yellow_cards,Fixture Yellow Cards,Number of yellow cards received by the player during the match.,int,{:.0f}
 player_hist,red_cards,Fixture Red Cards,Number of red cards received by the player during the match.,int,{:.0f}
@@ -162,3 +162,8 @@ game_week,transfers_made,GW Transfers,Total number of transfers for the game wee
 game_week,most_captained,GW Most Captained Player ID,ID of the player that most managers captained for the game week.,int,{:.0f}
 game_week,most_vice_captained,GW Most Vice Captained Player ID,ID of the player that most managers vice captained for the game week.,int,{:.0f}
 ,,GW Last Updated,Date/time when the data for this game week was last loaded from the FPL API.,datetime64,
+,,Rel Att Fixture Strength Home,Relative attacking strength of the team for the fixture for scaling the expected points of mid fielders and forwards both when playing at home,float,{:.1f}
+,,Rel Att Fixture Strength Away,Relative attacking strength of the team for the fixture for scaling the expected points of mid fielders and forwards both when playing away,float,{:.1f}
+,,Rel Def Fixture Strength Home,Relative defensive strength of the team for the fixture for scaling the expected points of mid fielders and forwards both when playing at home,float,{:.1f}
+,,Rel Def Fixture Strength Away,Relative defensive strength of the team for the fixture for scaling the expected points of mid fielders and forwards both when playing away,float,{:.1f}
+,,Rel Strength,Relative strength for this fixture compared to the average strength so far,float,{:.1f}
