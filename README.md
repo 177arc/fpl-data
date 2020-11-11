@@ -22,7 +22,7 @@ The following data points are worth highlighting:
 - *Expected Points* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Points that the player is expected to earn for each game week.
 - *Expected Goals For* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Goals that the team of the player is expected to score for each game week.
 - *Expected Goals Against* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Goals that the team of the player is expected to conceded for each game week.
-- 
+
 # List of data sets and data dictionaries
 * [player_gw_next_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/player_gw_next_eps_ext.csv) (~120,000 data points, [data dictionary](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/player_gw_next_eps_ext_data_dictionary.csv)):
 Contains a row for each player in the current season with expected points for the next game week up to the last one. The data is indexed by the player code which is unique across season.
@@ -38,7 +38,7 @@ Contains a row for each fixture in the current and the last season with most att
 Contains a row for each player in the current season with the corresponding team info. The data is index by the player code that is unique across seasons.
 * [teams.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/teams.csv) (120 data points, [data dictionary](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/teams_data_dictionary.csv)):
 Contains a row for each team playing in the current season with most attributes published by this FPL API endpoint: [](https://fantasy.premierleague.com/api/bootstrap-static/). The data is indexed by the team code that is unique across different seasons.
-* [players_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_ext.csv) (~42,000 data points, [data dictionary](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_ext_dictionary.csv)):
+* [players_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_ext.csv) (~42,000 data points, [data dictionary](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_ext_data_dictionary.csv)):
 Contains a row for each player in the current and last season with most of the attributes published by this FPL API endpoint: [](https://fantasy.premierleague.com/api/bootstrap-static/). The data is indexed by the player code that is unique across seasons.
-* [gws.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/gws.csv) (646 data points, [data dictionary](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/gws_dictionary.csv)):
+* [gws.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/gws.csv) (646 data points, [data dictionary](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/gws_data_dictionary.csv)):
 Contains a row for each game week of the current season wth most of the game week attributes published by this FPL API endpoint: [](https://fantasy.premierleague.com/api/bootstrap-static/). The data is indexed by the game week ID.

@@ -37,10 +37,6 @@ team,strength,Team Strength,Rating of the team's strength on a scale from 2 to 5
 ,,Team Short Name Away,Team short name playing at away,str,
 ,,Team Name Away,Team name playing at away,str,
 ,,Team Last Updated,The date/time when the data for this team was last loaded from the FPL API.,datetime64,
-,,Expected Points Next GW,Number of points that the player is expected to earn during the next game week,float,{:.1f}
-,,Expected Points Next 8 GWs,Number of points that the player is expected to earn over the next five game weeks,float,{:.0f}
-,,Expected Points GWs To Half,Number of points that the player is expected to earn over remaining game weeks of the current half season,float,{:.0f}
-,,Expected Points GWs To End,Number of points that the player is expected to earn over remaining game weeks of the current season,float,{:.0f}
 fixture,code,Fixture Code,ID of the fixture that is unique across seasons,int,{:.1f}
 fixture,,Fixture Strength Home,Strength of the home team for a specific fixture,int,{:.0f}
 fixture,,Fixture Strength Away,Strength of the away team for a specific fixture,int,{:.0f}
@@ -141,11 +137,17 @@ player,multiplier,Point Factor,"Multiplier for calculating the expected points a
 ,,Fixtures Next GW,"Next fixture of the team, including strength of opposing team.",str,
 ,,Fixtures Next 8 GWs,"Next 8 fixtures of the team, including strengths of opposing teams.",str,
 ,,Fixture Last Updated,Date/time when the data for this fixture was last loaded from the FPL API.,datetime64,
-,,Expected Points Next GW,Points that the player is expected to earn in the upcoming game week.,,
+,,Expected Points Next GW,Points that the player is expected to earn in the upcoming game week.,float,{:.0f}pts
+,,Expected Points Next 8 GWs,Points that the player is expected to earn over the next five game weeks,float,{:.0f}pts
+,,Expected Points GWs To Half,Points that the player is expected to earn over remaining game weeks of the current half season.,float,{:.0f}pts
+,,Expected Points GWs To End,Points that the player is expected to earn over remaining game weeks of the current season.,float,{:.0f}pts
 players_history_past,total_points,Season Total Points,Points that the player earned over the whole season.,int,{:.0f}pts
 players_history_past,minutes,Season Minutes,Minutes played over the whole season.,int,{:.0f} min
 players_history_past,ict_index,Season ICT Index,ICT Index at the end of the season as calculated by Fantasy Premier Leauge.,float,{:.1f}
 ,,Last Season Total Points,Points that the player earned during the previous season.,int,{:.0f}pts
+,,Expected Points,Points that the player is expected to earn for the game week.,int,{:.0f}pts
+,,Expected Goals For,Goals that the team of the player is expected to score for the game week.,int,{:.0f}
+,,Expected Goals Against,Goals that the team of the player is expected to conceded for the game week.,int,{:.0f}
 game_week,id,GW ID,Game week ID. These range from 1 to 38.,int,{:.0f}
 game_week,name,GW Name,"Name of the game week, e.g. Gameweek 1.",str,
 game_week,finished,Is GW Finished?,Whether the game week has finished.,bool,{:}
