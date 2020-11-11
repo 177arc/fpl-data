@@ -1,3 +1,6 @@
+![](https://github.com/177arc/fpl-data/workflows/CI%2FCD/badge.svg)
+[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-360/)
+
 # AWS lambda function for calculating FPL data statistics
 The purpose of this project is provide to an [AWS lambda function](https://aws.amazon.com/lambda/) that:
 1. retrieves data from the [FPL API](https://fpl.readthedocs.io/en/latest/)

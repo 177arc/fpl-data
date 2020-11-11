@@ -40,15 +40,15 @@ class TestE2E(unittest.TestCase):
 
     def test_lambda(self) -> None:
         dfs = [
-            dict(file='v1/gws.csv', index='GW ID'),
-            dict(file='v1/teams.csv', index='Team Code'),
-            dict(file='v1/players_ext.csv', index='Player Code'),
-            dict(file='v1/player_teams.csv', index='Player Code'),
-            dict(file='v1/players_gw_team_eps_ext.csv', index=['Player Code', 'Season', 'Game Week']),
-            dict(file='v1/player_gw_next_eps_ext.csv', index='Player Code'),
-            dict(file='v1/team_fixture_stats_ext.csv', index='Team Code'),
-            dict(file='v1/data_dictionary.csv', index=None),
-            dict(file='v1/data_sets.csv', index=None),
+            dict(file='v1/latest/gws.csv', index='GW ID'),
+            dict(file='v1/latest/teams.csv', index='Team Code'),
+            dict(file='v1/latest/players_ext.csv', index='Player Code'),
+            dict(file='v1/latest/player_teams.csv', index='Player Code'),
+            dict(file='v1/latest/players_gw_team_eps_ext.csv', index=['Player Code', 'Season', 'Game Week']),
+            dict(file='v1/latest/player_gw_next_eps_ext.csv', index='Player Code'),
+            dict(file='v1/latest/team_fixture_stats_ext.csv', index='Team Code'),
+            dict(file='v1/latest/data_dictionary.csv', index=None),
+            dict(file='v1/latest/data_sets.csv', index=None),
         ]
 
         # Delete previous artifacts
