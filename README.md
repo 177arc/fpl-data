@@ -10,6 +10,13 @@ such as the [FPL Advisor](https://github.com/177arc/fpl-advisor). The data sets 
 
 The lambda function runs in AWS on an hourly schedule during the day and continously updates the data.
 
+# Important data points
+The following data points are worth highlighting:
+- *Expected Points Next GW* in [player_gw_next_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/player_gw_next_eps_ext.csv): Points that each player is expected to earn in the upcoming game week.
+- *Expected Points* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Points that the player is expected to earn for each game week.
+- *Expected Goals For* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Goals that the team of the player is expected to score for each game week.
+- *Expected Goals Against* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Goals that the team of the player is expected to conceded for each game week.
+
 # Expected points calculation methodology
 The fundamental idea is that the best evidence for a player's ability to generate points is to look over
 a sliding window of past fixtures while taking into account the difficulty of the opposing team.
@@ -19,12 +26,7 @@ each player for every event type (e.g. goals scored, goals conceded, clean sheet
 over a sliding window of past fixtures (currently 12). These averages are adjusted based on the relative strength
 of the opposing team compared to the relative strength of the opposing teams that the player has played so far.
 
-# Important data points
-The following data points are worth highlighting:
-- *Expected Points Next GW* in [player_gw_next_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/player_gw_next_eps_ext.csv): Points that each player is expected to earn in the upcoming game week.
-- *Expected Points* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Points that the player is expected to earn for each game week.
-- *Expected Goals For* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Goals that the team of the player is expected to score for each game week.
-- *Expected Goals Against* in [players_gw_team_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/players_gw_team_eps_ext.csv): Goals that the team of the player is expected to conceded for each game week.
+For more details, see [prep-data.ipynb Jupyter notebook](https://github.com/177arc/fpl-data/blob/develop/prep_data.ipynb).
 
 # List of data sets and data dictionaries
 * [player_gw_next_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/player_gw_next_eps_ext.csv) (~120,000 data points, [data dictionary](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/player_gw_next_eps_ext_data_dictionary.csv)):
