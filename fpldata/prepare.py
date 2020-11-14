@@ -31,7 +31,7 @@ def get_next_gw_counts(ctx: Context) -> Dict[str, int]:
     return collections.OrderedDict([(get_next_gw_name(gw, ctx), gw) for gw in range(1, ctx.total_gws - ctx.next_gw + 1)])
 
 
-def get_news(row: S) -> Optional[str]:
+def get_news(row: S):
     """Derives the text for the News column."""
     if pd.isnull(row['News']) or row['News'] == '':
         return None

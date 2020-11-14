@@ -21,7 +21,8 @@ def export_df(df: DF, data_dir: str, df_name: str, ctx: Context) -> None:
     # Exports the data dictionary for the data frame.
     (ctx.dd.df(any_data_set=True)
      [lambda dd: dd['Name'].isin(df.reset_index().columns)]
-     .to_csv(f'{data_dir}/{df_name}_data_dictionary.csv', date_format=DATA_EXPORT_FORMAT))
+     .drop(columns=['Data Set'])
+     .to_csv(f'{data_dir}/{df_name}_data_dictionary.csv', date_format=DATA_EXPORT_FORMAT, index=False))
 
 
 def export_dfs(dfs: dict, data_sets: DF, data_dir: str, ctx: Context) -> None:
