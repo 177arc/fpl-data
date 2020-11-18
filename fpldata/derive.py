@@ -594,7 +594,7 @@ def proj_to_gw(players_fixture_team_eps: DF) -> DF:
         # This is necessary because the results of the sum function is 0 and not np.nan for series with only pd.nan elements and calling sum with min_count=1 is too slow.
         return (players_gw_team_eps
                 .assign(**{'Fixture Total Points': lambda df: np.where(df['Fixture Cost'].isnull(), np.nan, df['Fixture Total Points'])})
-                .assign(**{'Fixture Minutes Played': lambda df: np.where(df['Fixture Cost'].isnull(), np.nan, df['Fixture Total Points'])}))
+                .assign(**{'Fixture Minutes Played': lambda df: np.where(df['Fixture Cost'].isnull(), np.nan, df['Fixture Minutes Played'])}))
 
     def get_player_gws(players_gw_team_eps: DF) -> pd.Index:
         # Create a data frame with a row of every game week/player ID combination for the current and the last season. This is required to deal with game weeks that have double or missing fixtures.
