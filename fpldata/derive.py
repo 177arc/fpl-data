@@ -289,6 +289,9 @@ def add_team_cols(team_fixture_strength: DF, ctx: Context) -> DF:
 
 
 def add_fixture_stats(fixture_teams_stats: DF, ctx: Context) -> DF:
+    def save_div(num: float, s: S) -> S:
+        return (num / s.fillna(1)).replace(np.inf, 1)
+
     for stat_type in itertools.product(*ctx.FIXTURE_STATS_TYPES):
         post_fix = ' '.join(stat_type).strip()
         fixture_teams_stats = (fixture_teams_stats
@@ -300,10 +303,10 @@ def add_fixture_stats(fixture_teams_stats: DF, ctx: Context) -> DF:
     return (fixture_teams_stats
         .assign(**{'_Rel Att Fixture Strength Home': lambda df: df['_Rel Opp Avg Team Goals Conceded Away To Fixture'].fillna(1)})
         .assign(**{'_Rel Att Fixture Strength Away': lambda df: df['_Rel Opp Avg Team Goals Conceded Home To Fixture'].fillna(1)})
-        .assign(**{'_Rel Def Fixture Strength Home': lambda df: 1 / (df['_Rel Opp Avg Team Goals Scored Away To Fixture'].fillna(1))})
-        .assign(**{'_Rel Def Fixture Strength Away': lambda df: 1 / (df['_Rel Opp Avg Team Goals Scored Home To Fixture'].fillna(1))})
-        .assign(**{'_Rel Clean Sheet Fixture Strength Home': lambda df: 1 / (df['_Rel Opp Avg Team Clean Sheets Away To Fixture'].fillna(1))})
-        .assign(**{'_Rel Clean Sheet Fixture Strength Away': lambda df: 1 / (df['_Rel Opp Avg Team Clean Sheets Home To Fixture'].fillna(1))})
+        .assign(**{'_Rel Def Fixture Strength Home': lambda df: save_div(1, df['_Rel Opp Avg Team Goals Scored Away To Fixture'])})
+        .assign(**{'_Rel Def Fixture Strength Away': lambda df: save_div(1, df['_Rel Opp Avg Team Goals Scored Home To Fixture'])})
+        .assign(**{'_Rel Clean Sheet Fixture Strength Home': lambda df: save_div(1, df['_Rel Opp Avg Team Clean Sheets Away To Fixture'])})
+        .assign(**{'_Rel Clean Sheet Fixture Strength Away': lambda df: save_div(1, df['_Rel Opp Avg Team Clean Sheets Home To Fixture'])})
         .assign(**{'Rel Att Fixture Strength': lambda df: df['_Rel Opp Avg Team Goals Conceded To Fixture'].fillna(1)})
         .assign(**{'Rel Def Fixture Strength': lambda df: 1 / df['_Rel Opp Avg Team Goals Scored To Fixture'].fillna(1)})
         .assign(**{'Expected Goals For': lambda df: df['_Avg Opp Avg Team Goals Conceded To Fixture']})
@@ -410,6 +413,15 @@ def calc_eps_for_next_gws(player_gw_eps: DF, ctx: Context) -> S:
         return S(list(player_gw_eps.columns.values) + ['Expected Points ' + gw for gw in list(ctx.next_gw_counts)])
 
     row = player_gw_eps.iloc[0]
+
+    for gw in range(0, ctx.total_gws-ctx.next_gw+1):
+        try:
+            row['Expected Points GW ' + str(ctx.next_gw+gw)] = (player_gw_eps.iloc[gw]
+                                                        .at['Expected Point With Chance Avail'])
+        except IndexError as e:
+            print(gw)
+            print(row)
+
     for next_gw_post_fix, next_gw_count in ctx.next_gw_counts.items():
         future_df = player_gw_eps.iloc[:next_gw_count]
         row['Expected Points ' + next_gw_post_fix] = future_df['Expected Point With Chance Avail'].sum()
@@ -635,7 +647,7 @@ def get_players_gw_team_eps(players_fixture_team_eps: DF, player_teams: DF) -> D
 
 
 def get_player_gw_next_eps(players_gw_team_eps: DF, ctx: Context) -> DF:
-    return (players_gw_team_eps[lambda df: df.index.get_level_values('Season') == ctx.current_season]
+    return (players_gw_team_eps
             .reset_index()
             [lambda df: (df['Game Week'] >= ctx.next_gw) & (df['Season'] == ctx.current_season)]
             .sort_values(['Season', 'Game Week'])

@@ -137,8 +137,82 @@ player,multiplier,Point Factor,"Multiplier for calculating the expected points a
 ,,Fixtures Next GW,"Next fixture of the team, including strength of opposing team.",str,
 ,,Fixtures Next 8 GWs,"Next 8 fixtures of the team, including strengths of opposing teams.",str,
 ,,Fixture Last Updated,Date/time when the data for this fixture was last loaded from the FPL API.,datetime64,
+,,Expected Points GW 1,Points that the player is expected to earn in game week 1.,float,{:.0f}pts
+,,Expected Points GW 2,Points that the player is expected to earn in game week 2.,float,{:.0f}pts
+,,Expected Points GW 3,Points that the player is expected to earn in game week 3.,float,{:.0f}pts
+,,Expected Points GW 4,Points that the player is expected to earn in game week 4.,float,{:.0f}pts
+,,Expected Points GW 5,Points that the player is expected to earn in game week 5.,float,{:.0f}pts
+,,Expected Points GW 6,Points that the player is expected to earn in game week 6.,float,{:.0f}pts
+,,Expected Points GW 7,Points that the player is expected to earn in game week 7.,float,{:.0f}pts
+,,Expected Points GW 8,Points that the player is expected to earn in game week 8.,float,{:.0f}pts
+,,Expected Points GW 9,Points that the player is expected to earn in game week 9.,float,{:.0f}pts
+,,Expected Points GW 10,Points that the player is expected to earn in game week 10.,float,{:.0f}pts
+,,Expected Points GW 11,Points that the player is expected to earn in game week 11.,float,{:.0f}pts
+,,Expected Points GW 12,Points that the player is expected to earn in game week 12.,float,{:.0f}pts
+,,Expected Points GW 13,Points that the player is expected to earn in game week 13.,float,{:.0f}pts
+,,Expected Points GW 14,Points that the player is expected to earn in game week 14.,float,{:.0f}pts
+,,Expected Points GW 15,Points that the player is expected to earn in game week 15.,float,{:.0f}pts
+,,Expected Points GW 16,Points that the player is expected to earn in game week 16.,float,{:.0f}pts
+,,Expected Points GW 17,Points that the player is expected to earn in game week 17.,float,{:.0f}pts
+,,Expected Points GW 18,Points that the player is expected to earn in game week 18.,float,{:.0f}pts
+,,Expected Points GW 19,Points that the player is expected to earn in game week 19.,float,{:.0f}pts
+,,Expected Points GW 20,Points that the player is expected to earn in game week 20.,float,{:.0f}pts
+,,Expected Points GW 21,Points that the player is expected to earn in game week 21.,float,{:.0f}pts
+,,Expected Points GW 22,Points that the player is expected to earn in game week 22.,float,{:.0f}pts
+,,Expected Points GW 23,Points that the player is expected to earn in game week 23.,float,{:.0f}pts
+,,Expected Points GW 24,Points that the player is expected to earn in game week 24.,float,{:.0f}pts
+,,Expected Points GW 25,Points that the player is expected to earn in game week 25.,float,{:.0f}pts
+,,Expected Points GW 26,Points that the player is expected to earn in game week 26.,float,{:.0f}pts
+,,Expected Points GW 27,Points that the player is expected to earn in game week 27.,float,{:.0f}pts
+,,Expected Points GW 28,Points that the player is expected to earn in game week 28.,float,{:.0f}pts
+,,Expected Points GW 29,Points that the player is expected to earn in game week 29.,float,{:.0f}pts
+,,Expected Points GW 30,Points that the player is expected to earn in game week 30.,float,{:.0f}pts
+,,Expected Points GW 31,Points that the player is expected to earn in game week 31.,float,{:.0f}pts
+,,Expected Points GW 32,Points that the player is expected to earn in game week 32.,float,{:.0f}pts
+,,Expected Points GW 33,Points that the player is expected to earn in game week 33.,float,{:.0f}pts
+,,Expected Points GW 34,Points that the player is expected to earn in game week 34.,float,{:.0f}pts
+,,Expected Points GW 35,Points that the player is expected to earn in game week 35.,float,{:.0f}pts
+,,Expected Points GW 36,Points that the player is expected to earn in game week 36.,float,{:.0f}pts
+,,Expected Points GW 37,Points that the player is expected to earn in game week 37.,float,{:.0f}pts
+,,Expected Points GW 38,Points that the player is expected to earn in game week 38.,float,{:.0f}pts
 ,,Expected Points Next GW,Points that the player is expected to earn in the upcoming game week.,float,{:.0f}pts
-,,Expected Points Next 8 GWs,Points that the player is expected to earn over the next five game weeks,float,{:.0f}pts
+,,Expected Points Next 2 GWs,Points that the player is expected to earn over the next 2 game weeks,float,{:.0f}pts
+,,Expected Points Next 3 GWs,Points that the player is expected to earn over the next 3 game weeks,float,{:.0f}pts
+,,Expected Points Next 4 GWs,Points that the player is expected to earn over the next 4 game weeks,float,{:.0f}pts
+,,Expected Points Next 5 GWs,Points that the player is expected to earn over the next 5 game weeks,float,{:.0f}pts
+,,Expected Points Next 6 GWs,Points that the player is expected to earn over the next 6 game weeks,float,{:.0f}pts
+,,Expected Points Next 7 GWs,Points that the player is expected to earn over the next 7 game weeks,float,{:.0f}pts
+,,Expected Points Next 8 GWs,Points that the player is expected to earn over the next 8 game weeks,float,{:.0f}pts
+,,Expected Points Next 9 GWs,Points that the player is expected to earn over the next 9 game weeks,float,{:.0f}pts
+,,Expected Points Next 10 GWs,Points that the player is expected to earn over the next 10 game weeks,float,{:.0f}pts
+,,Expected Points Next 11 GWs,Points that the player is expected to earn over the next 11 game weeks,float,{:.0f}pts
+,,Expected Points Next 12 GWs,Points that the player is expected to earn over the next 12 game weeks,float,{:.0f}pts
+,,Expected Points Next 13 GWs,Points that the player is expected to earn over the next 13 game weeks,float,{:.0f}pts
+,,Expected Points Next 14 GWs,Points that the player is expected to earn over the next 14 game weeks,float,{:.0f}pts
+,,Expected Points Next 15 GWs,Points that the player is expected to earn over the next 15 game weeks,float,{:.0f}pts
+,,Expected Points Next 16 GWs,Points that the player is expected to earn over the next 16 game weeks,float,{:.0f}pts
+,,Expected Points Next 17 GWs,Points that the player is expected to earn over the next 17 game weeks,float,{:.0f}pts
+,,Expected Points Next 18 GWs,Points that the player is expected to earn over the next 18 game weeks,float,{:.0f}pts
+,,Expected Points Next 19 GWs,Points that the player is expected to earn over the next 19 game weeks,float,{:.0f}pts
+,,Expected Points Next 20 GWs,Points that the player is expected to earn over the next 20 game weeks,float,{:.0f}pts
+,,Expected Points Next 21 GWs,Points that the player is expected to earn over the next 21 game weeks,float,{:.0f}pts
+,,Expected Points Next 22 GWs,Points that the player is expected to earn over the next 22 game weeks,float,{:.0f}pts
+,,Expected Points Next 23 GWs,Points that the player is expected to earn over the next 23 game weeks,float,{:.0f}pts
+,,Expected Points Next 24 GWs,Points that the player is expected to earn over the next 24 game weeks,float,{:.0f}pts
+,,Expected Points Next 25 GWs,Points that the player is expected to earn over the next 25 game weeks,float,{:.0f}pts
+,,Expected Points Next 26 GWs,Points that the player is expected to earn over the next 26 game weeks,float,{:.0f}pts
+,,Expected Points Next 27 GWs,Points that the player is expected to earn over the next 27 game weeks,float,{:.0f}pts
+,,Expected Points Next 28 GWs,Points that the player is expected to earn over the next 28 game weeks,float,{:.0f}pts
+,,Expected Points Next 29 GWs,Points that the player is expected to earn over the next 29 game weeks,float,{:.0f}pts
+,,Expected Points Next 30 GWs,Points that the player is expected to earn over the next 30 game weeks,float,{:.0f}pts
+,,Expected Points Next 31 GWs,Points that the player is expected to earn over the next 31 game weeks,float,{:.0f}pts
+,,Expected Points Next 32 GWs,Points that the player is expected to earn over the next 32 game weeks,float,{:.0f}pts
+,,Expected Points Next 33 GWs,Points that the player is expected to earn over the next 33 game weeks,float,{:.0f}pts
+,,Expected Points Next 34 GWs,Points that the player is expected to earn over the next 34 game weeks,float,{:.0f}pts
+,,Expected Points Next 35 GWs,Points that the player is expected to earn over the next 35 game weeks,float,{:.0f}pts
+,,Expected Points Next 36 GWs,Points that the player is expected to earn over the next 36 game weeks,float,{:.0f}pts
+,,Expected Points Next 37 GWs,Points that the player is expected to earn over the next 37 game weeks,float,{:.0f}pts
+,,Expected Points Next 38 GWs,Points that the player is expected to earn over the next 38 game weeks,float,{:.0f}pts
 ,,Expected Points GWs To Half,Points that the player is expected to earn over remaining game weeks of the current half season.,float,{:.0f}pts
 ,,Expected Points GWs To End,Points that the player is expected to earn over remaining game weeks of the current season.,float,{:.0f}pts
 players_history_past,total_points,Season Total Points,Points that the player earned over the whole season.,int,{:.0f}pts
