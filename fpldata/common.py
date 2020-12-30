@@ -5,7 +5,8 @@ This module contains shared helper functions.
 import pandas as pd
 import numpy as np
 from datadict import DataDict
-
+from typing import Tuple, NoReturn
+from fplpandas import FPLPandas
 
 # Define type aliases
 DF = pd.DataFrame
@@ -29,6 +30,59 @@ class Context:
     last_season: str                    # The name of the last season, e.g. '2019-20'.
     current_season: str                 # The name of the current season, e.g. '2020-21'.
     dd: DataDict                        # The data dictionary to use for column remapping, formatting and descriptions.
+
+
+class FPL:
+    def get_game_weeks(self) -> DF:
+        raise NotImplementedError
+
+    def get_teams(self) -> DF:
+        raise NotImplementedError
+
+    def get_teams_last_season(self) -> DF:
+        raise NotImplementedError
+
+    def get_fixtures(self) -> DF:
+        raise NotImplementedError
+
+    def get_fixtures_last_season(self) -> DF:
+        raise NotImplementedError
+
+    def get_players(self) -> Tuple[DF, DF, DF]:
+        raise NotImplementedError
+
+    def get_players_last_season(self) -> Tuple[DF, DF, DF]:
+        raise NotImplementedError
+
+    def assert_context(self, ctx: Context) -> NoReturn:
+        raise NotImplementedError
+
+
+class FPLPandasEx(FPLPandas, FPL):
+    TEAMS_FILE = 'teams.csv'  # File with team data for last season
+    PLAYERS_FILE = f'players.csv'  # File with player data for last season
+    PLAYERS_HISTORY_FILE = f'players_history.csv'  # File with player fixture data for last season
+    FIXTURES_FILE = f'fixtures.csv'  # File with fixture data for last season
+
+    last_season_path: str
+
+    def __init__(self, last_season_path):
+        self.last_season_path = last_season_path
+        super().__init__()
+
+    def get_teams_last_season(self) -> DF:
+        return pd.read_csv(f'{self.last_season_path}/{self.TEAMS_FILE}', index_col=['id'], na_values='None')
+
+    def get_fixtures_last_season(self) -> DF:
+        return pd.read_csv(f'{self.last_season_path}/{self.FIXTURES_FILE}', index_col=['id'], na_values='None')
+
+    def get_players_last_season(self) -> Tuple[DF, DF, DF]:
+        return (pd.read_csv(f'{self.last_season_path}/{self.PLAYERS_FILE}', index_col=['id'], na_values='None'),
+                None,
+                pd.read_csv(f'{self.last_season_path}/{self.PLAYERS_HISTORY_FILE}', index_col=['player_id', 'fixture'], na_values='None'))
+
+    def assert_context(self, ctx: Context) -> NoReturn:
+        assert ctx.next_gw + len(ctx.next_gw_counts.keys()) == ctx.total_gws
 
 
 def validate_df(df: DF, df_name: str, required_columns: list):

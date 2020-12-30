@@ -1,5 +1,5 @@
 ![](https://github.com/177arc/fpl-data/workflows/CI%2FCD/badge.svg)
-[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 
 # AWS lambda function for calculating FPL data statistics
 The purpose of this project is provide to an [AWS lambda function](https://aws.amazon.com/lambda/) that:
@@ -26,7 +26,20 @@ each player for every event type (e.g. goals scored, goals conceded, clean sheet
 over a sliding window of past fixtures (currently 12). These averages are adjusted based on the relative strength
 of the opposing team compared to the relative strength of the opposing teams that the player has played so far.
 
+# Features
+- Team estimated strength and expected goals based on rolling window of fixtures of this and the last season
+- Player estimated points for each game week based on opposing team strength and points earned over short rolling window of past fixtures
+- Where past data is not available, estimates for past data are patched either using manually curated data or, if not available, using machine learning
+- Data completeness indicator for each player and game week combination
+- Estimated points for each past player and game week combination to support back testing
+- Correctly handles game weeks when team does not play as well as double game weeks
+
 For more details, see [prep-data.ipynb Jupyter notebook](https://github.com/177arc/fpl-data/blob/develop/prep_data.ipynb).
+
+# Limitations
+- Although player availability data is used, the textual news information is not interpreted to project a return date as part of the longer-term expected points calculation.
+In short, player availibiltiy is reliable for the upcoming game week but not thereafter.
+- Only data points from the FPL API are used but no alternative data is incorporated.
 
 # List of data sets and data dictionaries
 * [player_gw_next_eps_ext.csv](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/player_gw_next_eps_ext.csv) (~120,000 data points, [data dictionary](https://s3.eu-west-2.amazonaws.com/fpl.177arc.net/v1/latest/player_gw_next_eps_ext_data_dictionary.csv)):
