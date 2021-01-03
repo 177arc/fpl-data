@@ -4,23 +4,22 @@ This module contains shared helper functions.
 
 import pandas as pd
 import numpy as np
+import datetime as dt
 from datadict import DataDict
-from typing import Tuple, NoReturn
-from fplpandas import FPLPandas
 
 # Define type aliases
 DF = pd.DataFrame
 S = pd.Series
 
+POSITION_BY_TYPE: dict = {1: 'GK', 2: 'DEF', 3: 'MID', 4: 'FWD'}
+FIXTURE_TYPES: list = ['Home', 'Away', '']
+STATS_TYPES: list = ['Goals Scored', 'Goals Conceded', 'Clean Sheets']
+FIXTURE_STATS_TYPES: list = [STATS_TYPES, FIXTURE_TYPES]
+LOCAL_COL_PREFIX = '_'
+PRIVATE_COL_PREFIX = '__'
+
 
 class Context:
-    POSITION_BY_TYPE: dict = {1: 'GK', 2: 'DEF', 3: 'MID', 4: 'FWD'}
-    FIXTURE_TYPES: list = ['Home', 'Away', '']
-    STATS_TYPES: list = ['Goals Scored', 'Goals Conceded', 'Clean Sheets']
-    FIXTURE_STATS_TYPES: list = [STATS_TYPES, FIXTURE_TYPES]
-    LOCAL_COL_PREFIX = '_'
-    PRIVATE_COL_PREFIX = '__'
-
     total_gws: int                      # The number game weeks in a season.
     next_gw: int                        # The upcoming game week.
     def_next_gws: str                   # The default forecast time horizon, e.g. 'Next 8 GWs'
@@ -30,59 +29,7 @@ class Context:
     last_season: str                    # The name of the last season, e.g. '2019-20'.
     current_season: str                 # The name of the current season, e.g. '2020-21'.
     dd: DataDict                        # The data dictionary to use for column remapping, formatting and descriptions.
-
-
-class FPL:
-    def get_game_weeks(self) -> DF:
-        raise NotImplementedError
-
-    def get_teams(self) -> DF:
-        raise NotImplementedError
-
-    def get_teams_last_season(self) -> DF:
-        raise NotImplementedError
-
-    def get_fixtures(self) -> DF:
-        raise NotImplementedError
-
-    def get_fixtures_last_season(self) -> DF:
-        raise NotImplementedError
-
-    def get_players(self) -> Tuple[DF, DF, DF]:
-        raise NotImplementedError
-
-    def get_players_last_season(self) -> Tuple[DF, DF, DF]:
-        raise NotImplementedError
-
-    def assert_context(self, ctx: Context) -> NoReturn:
-        raise NotImplementedError
-
-
-class FPLPandasEx(FPLPandas, FPL):
-    TEAMS_FILE = 'teams.csv'  # File with team data for last season
-    PLAYERS_FILE = f'players.csv'  # File with player data for last season
-    PLAYERS_HISTORY_FILE = f'players_history.csv'  # File with player fixture data for last season
-    FIXTURES_FILE = f'fixtures.csv'  # File with fixture data for last season
-
-    last_season_path: str
-
-    def __init__(self, last_season_path):
-        self.last_season_path = last_season_path
-        super().__init__()
-
-    def get_teams_last_season(self) -> DF:
-        return pd.read_csv(f'{self.last_season_path}/{self.TEAMS_FILE}', index_col=['id'], na_values='None')
-
-    def get_fixtures_last_season(self) -> DF:
-        return pd.read_csv(f'{self.last_season_path}/{self.FIXTURES_FILE}', index_col=['id'], na_values='None')
-
-    def get_players_last_season(self) -> Tuple[DF, DF, DF]:
-        return (pd.read_csv(f'{self.last_season_path}/{self.PLAYERS_FILE}', index_col=['id'], na_values='None'),
-                None,
-                pd.read_csv(f'{self.last_season_path}/{self.PLAYERS_HISTORY_FILE}', index_col=['player_id', 'fixture'], na_values='None'))
-
-    def assert_context(self, ctx: Context) -> NoReturn:
-        assert ctx.next_gw + len(ctx.next_gw_counts.keys()) == ctx.total_gws
+    now: dt.datetime                    # The current date/time. This is required for fixing time when running test mode.
 
 
 def validate_df(df: DF, df_name: str, required_columns: list):
@@ -149,5 +96,5 @@ def is_notebook():
         return False
 
 
-def remove_temp_cols(df: DF, ctx: Context) -> DF:
-    return df[[col for col in df.columns if not col.startswith(ctx.LOCAL_COL_PREFIX)]]
+def remove_temp_cols(df: DF) -> DF:
+    return df[[col for col in df.columns if not col.startswith(LOCAL_COL_PREFIX)]]

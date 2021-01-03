@@ -1,7 +1,8 @@
 import datetime as dt
 import pandas as pd
 from pathlib import Path
-from .common import Context, remove_temp_cols
+from datadict import DataDict
+from .common import remove_temp_cols
 
 # Define type aliases
 DF = pd.DataFrame
@@ -11,24 +12,24 @@ VERSION = '1'
 
 
 # noinspection PyTypeChecker
-def export_df(df: DF, data_dir: str, df_name: str, ctx: Context) -> None:
+def export_df(df: DF, data_dir: str, df_name: str, dd: DataDict) -> None:
     # Remove temporary columns.
-    df = df.pipe(remove_temp_cols, ctx)
+    df = df.pipe(remove_temp_cols)
 
     # Exports the data frame.
     df.to_csv(f'{data_dir}/{df_name}.csv', date_format=DATA_EXPORT_FORMAT)
 
     # Exports the data dictionary for the data frame.
-    (ctx.dd.df(any_data_set=True)
-     [lambda dd: dd['Name'].isin(df.reset_index().columns)]
+    (dd.df(any_data_set=True)
+     [lambda dd_df: dd_df['Name'].isin(df.reset_index().columns)]
      .drop(columns=['Data Set'])
      .to_csv(f'{data_dir}/{df_name}_data_dictionary.csv', date_format=DATA_EXPORT_FORMAT, index=False))
 
 
-def export_dfs(dfs: dict, data_sets: DF, data_dir: str, ctx: Context) -> None:
+def export_dfs(dfs: dict, data_sets: DF, data_dir: str, dd: DataDict) -> None:
     Path(data_dir).mkdir(parents=True, exist_ok=True)
     for index, _ in data_sets.iterrows():
-        dfs[index].pipe(export_df, data_dir, index, ctx)
+        dfs[index].pipe(export_df, data_dir, index, dd)
 
 
 def add_data_sets_stats(data_sets: DF, dfs: dict) -> DF:

@@ -1,0 +1,21 @@
+id,code,name,short_name,strength,test_comment
+1,3,Arsenal,ARS,4,
+2,7,Aston Villa,AVL,3,Team without fixture for current game week and delayed fixture not scheduled
+3,36,Brighton,BHA,3,
+4,90,Burnley,BUR,2,
+5,8,Chelsea,CHE,4,
+6,31,Crystal Palace,CRY,3,
+7,11,Everton,EVE,3,
+8,54,Fulham,FUL,2,
+9,13,Leicester,LEI,4,
+10,2,Leeds,LEE,3,
+11,14,Liverpool,LIV,5,
+12,43,Man City,MCI,5,Team with double fixture for current gameweek
+13,1,Man Utd,MUN,4,
+14,4,Newcastle,NEW,3,Team with fixture for current game week but delayed fixture not scheduled
+15,49,Sheffield Utd,SHU,3,
+16,20,Southampton,SOU,3,Team with fixture for current game week
+17,6,Spurs,TOT,4,
+18,35,West Brom,WBA,2,
+19,21,West Ham,WHU,3,
+20,39,Wolves,WOL,3,

@@ -2,3 +2,6 @@
 /.vscode/
 /layer/python/
 /layer/layer.zip
+/*.zip
+/*.log
+/tests/comp/actual_*.csv

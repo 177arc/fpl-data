@@ -12,7 +12,7 @@ DF = pd.DataFrame
 S = pd.Series
 
 
-class S3Store():
+class S3Store:
     def_s3_bucket = 'fpl.177arc.net'
 
     def __is_zip(self, file_name: str) -> bool:
@@ -70,7 +70,7 @@ class S3Store():
 
         self.s3.put_object(Body=buffer.getvalue(), Bucket=self.s3_bucket, Key=key_name, ContentEncoding='gzip')
 
-    def save_file(self, source_file: str, key_name: str, content_encoding: str='') -> None:
+    def save_file(self, source_file: str, key_name: str, content_encoding: str = '') -> None:
         """
         Saves the given file to the S3 bucket.
 
