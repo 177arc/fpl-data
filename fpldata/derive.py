@@ -421,6 +421,7 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
                                                                         df['_Rel Clean Sheet Fixture Strength Home'],
                                                                         df['_Rel Clean Sheet Fixture Strength Away'])})
             .assign(**{'Stats Completeness Percent': lambda df: df['Fixtures Played To Fixture'] / ctx.player_fixtures_look_back * 100})
+
             .assign(**{'Rolling Avg Game Points': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
                     .where((df['Season'] == ctx.current_season) & (df['Game Week'] <= ctx.next_gw) | (df['Season'] != ctx.current_season))})
             .drop(columns=['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Played']))
