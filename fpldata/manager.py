@@ -6,6 +6,7 @@ import tempfile
 import pandas as pd
 import datetime as dt
 from datadict import DataDict
+import numpy as np
 
 from .s3store import S3Store
 from .export import export_dfs, add_data_sets_stats, export_data_sets, VERSION
@@ -56,6 +57,9 @@ class FPLManagerBase:
         raise NotImplementedError
 
     def assert_player_gw_next_eps_ext(self, player_gw_next_eps_ext: DF) -> NoReturn:
+        raise NotImplementedError
+
+    def assert_players_gw_team_eps_ext(self, players_gw_team_eps_ext: DF) -> NoReturn:
         raise NotImplementedError
 
 
@@ -149,5 +153,7 @@ class FPLManager(FPLPandas, FPLManagerBase):
         pass
 
     def assert_player_gw_next_eps_ext(self, player_gw_next_eps_ext: DF) -> NoReturn:
-        # TODO: Implement some sense checks.
-        pass
+        assert player_gw_next_eps_ext[lambda df: df.isin([np.inf, -np.inf]).any(axis=1)].shape[0] == 0, 'There are inifinite values in player_gw_next_eps_ext. Run player_gw_next_eps_ext[lambda df: df.isin([np.inf, -np.inf]).any(axis=1)] to finds row with inifite values.'
+
+    def assert_players_gw_team_eps_ext(self, players_gw_team_eps_ext: DF) -> NoReturn:
+        assert players_gw_team_eps_ext[lambda df: df.isin([np.inf, -np.inf]).any(axis=1)].shape[0] == 0, 'There are inifinite values in players_gw_team_eps_ext. Run players_gw_team_eps_ext[lambda df: df.isin([np.inf, -np.inf]).any(axis=1)] to finds row with inifite values.'

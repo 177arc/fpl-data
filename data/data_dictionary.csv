@@ -128,7 +128,7 @@ fixture,team_a_score,Away Team Score,Goals scored by the away team,int,
 fixture,team_h_score,Home Team Score,Goals scored by the home team,int,
 fixture,team_a_difficulty,Away Team FDR,Difficulty score of the away team (1: Easy to 5: Difficult),int,
 fixture,team_h_difficulty,Home Team FDR,Difficulty score of the home team (1: Easy to 5: Difficult),int,
-fixture,event,Game Week,Game week of the fixture (1 to 38),int,
+fixture,event,Game Week,Game week of the fixture (1 to 38),int,{:.0f}
 ,,Current Game Week,Current game week for the team.,int,
 fixture,kickoff_time,Kick Off Time,Kick off date and time of the fixture.,datetime64,
 player,position,Team Position,"Position in the team selection, e.g. 0 is the goal keeper.",int,{:.0f}
