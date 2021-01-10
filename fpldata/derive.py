@@ -533,8 +533,7 @@ def calc_eps_ext(player_fixture_stats: pd.DataFrame) -> np.ndarray:
 
                  # Defensive points
                  + np.where(player_fixture_stats['Field Position'].isin(['GK', 'DEF']), GOAL_CONCEDED_POINTS, 0)
-                    * player_fixture_stats['_Goals Conceded Multiples To Fixture'].fillna(0)
-                 + OWN_GOAL_POINTS * df['_Own Goals To Fixture'].fillna(0)
+                    * df['_Goals Conceded Multiples To Fixture'].fillna(0)
                  / player_fixture_stats['_Rel Def Strength'].fillna(1)
 
                  # Clean sheet points
@@ -544,10 +543,11 @@ def calc_eps_ext(player_fixture_stats: pd.DataFrame) -> np.ndarray:
                  * df['_Clean Sheets To Fixture'].fillna(0)
                  * player_fixture_stats['_Rel Def Strength'].fillna(1)
 
-                 # Other points
+                 # Other points not dependent on attacking or defensive strength
                 + PEN_MISS_POINTS * df['_Penalties Missed To Fixture'].fillna(0)
                 + SAVES_POINTS * df['_Saves Multiples To Fixture'].fillna(0)
                 + PEN_SAVE_POINTS * df['_Penalties Saved To Fixture'].fillna(0)
+                + OWN_GOAL_POINTS * df['_Own Goals To Fixture'].fillna(0)
                 + df['_Bonus Points To Fixture'].fillna(0)
                 + YELLOW_CARD_POINTS * df['_Yellow Cards To Fixture'].fillna(0)
                 + RED_CARD_POINTS * df['_Red Cards To Fixture'].fillna(0)
