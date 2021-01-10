@@ -121,7 +121,7 @@ class FPLManager(FPLPandas, FPLManagerBase):
         return pd.read_csv(self.TEAM_STATS_EST_FILE).set_index('Team Code')
 
     def publish_data_sets(self, variables: Dict) -> DF:
-        logging.info('Publishing data sets to S3 ...')
+        logging.info(f'Publishing data sets to {self.publish_s3_bucket}/v{VERSION}/latest/ ...')
 
         s3store = S3Store(self.publish_s3_bucket)
 
