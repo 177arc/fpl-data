@@ -73,3 +73,9 @@ class FPLManagerTest(FPLManagerBase):
         player_gw_next_eps_ext_exp = pd.read_csv(f'{self.tests_path}/player_gw_next_eps_ext_expected.csv', index_col='Player Code', parse_dates=['Kick Off Time', 'News Date', 'Team Last Updated', 'Player Last Updated'])
 
         assert_frame_equal(player_gw_next_eps_ext, player_gw_next_eps_ext_exp, check_column_type=False)
+
+    def assert_players_gw_team_eps_ext(self, players_gw_team_eps_ext: DF) -> NoReturn:
+        players_gw_team_eps_ext.to_csv(f'{self.tests_path}/players_gw_team_eps_ext_actual.csv')
+        players_gw_team_eps_ext_exp = pd.read_csv(f'{self.tests_path}/players_gw_team_eps_ext_expected.csv', index_col=['Player Code', 'Season', 'Game Week'], parse_dates=['Kick Off Time', 'News Date', 'Team Last Updated', 'Player Last Updated'])
+
+        assert_frame_equal(players_gw_team_eps_ext, players_gw_team_eps_ext_exp, check_column_type=False, check_dtype=False)

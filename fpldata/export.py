@@ -1,5 +1,6 @@
 import datetime as dt
 import pandas as pd
+import numpy as np
 from pathlib import Path
 from datadict import DataDict
 from .common import remove_temp_cols
@@ -14,7 +15,7 @@ VERSION = '1'
 # noinspection PyTypeChecker
 def export_df(df: DF, data_dir: str, df_name: str, dd: DataDict) -> None:
     # Remove temporary columns.
-    df = df.pipe(remove_temp_cols)
+    df = df.pipe(remove_temp_cols).fillna(value=np.nan)
 
     # Exports the data frame.
     df.to_csv(f'{data_dir}/{df_name}.csv', date_format=DATA_EXPORT_FORMAT)

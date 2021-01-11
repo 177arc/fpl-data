@@ -522,36 +522,36 @@ def calc_eps_ext(player_fixture_stats: pd.DataFrame) -> np.ndarray:
     # Defines points given for each action (see https://fantasy.premierleague.com/help/rules)
     df = player_fixture_stats.sort_values(['Player Code', 'Kick Off Time']).groupby('Player Code').shift()
 
-    return np.where(player_fixture_stats['Fixtures Played To Fixture'] > 0,
+    return np.where(df['Fixtures Played To Fixture'] > 0,
         (   # Attacking related points
-            ((np.where(player_fixture_stats['Field Position'].isin(['GK', 'DEF']), DEF_GOAL_POINTS, 0)
-               + np.where(player_fixture_stats['Field Position'].isin(['MID']), MID_GOAL_POINTS, 0)
-               + np.where(player_fixture_stats['Field Position'].isin(['FWD']), FWD_GOAL_POINTS, 0))
-             * df['_Goals Scored To Fixture'].fillna(0)
-              + ASSIST_POINTS * df['_Assists To Fixture'].fillna(0))
-             * player_fixture_stats['_Rel Att Strength'].fillna(1)
+                ((np.where(player_fixture_stats['Field Position'].isin(['GK', 'DEF']), DEF_GOAL_POINTS, 0)
+                   + np.where(player_fixture_stats['Field Position'].isin(['MID']), MID_GOAL_POINTS, 0)
+                   + np.where(player_fixture_stats['Field Position'].isin(['FWD']), FWD_GOAL_POINTS, 0))
+                 * df['_Goals Scored To Fixture'].fillna(0)
+                  + ASSIST_POINTS * df['_Assists To Fixture'].fillna(0))
+                 * player_fixture_stats['_Rel Att Strength'].fillna(1)
 
-             # Defensive points
-             + np.where(player_fixture_stats['Field Position'].isin(['GK', 'DEF']), GOAL_CONCEDED_POINTS, 0)
-                * player_fixture_stats['_Goals Conceded Multiples To Fixture'].fillna(0)
-             + OWN_GOAL_POINTS * df['_Own Goals To Fixture'].fillna(0)
-             / player_fixture_stats['_Rel Def Strength'].fillna(1)
+                 # Defensive points
+                 + np.where(player_fixture_stats['Field Position'].isin(['GK', 'DEF']), GOAL_CONCEDED_POINTS, 0)
+                    * df['_Goals Conceded Multiples To Fixture'].fillna(0)
+                 / player_fixture_stats['_Rel Def Strength'].fillna(1)
 
-             # Clean sheet points
-             + (np.where(player_fixture_stats['Field Position'].isin(['GK', 'DEF']), DEF_CLEAN_POINTS, 0)
-                + np.where(player_fixture_stats['Field Position'].isin(['MID']), MID_CLEAN_POINTS, 0)
-                + np.where(player_fixture_stats['Field Position'].isin(['FWD']), FWD_CLEAN_POINTS, 0))
-             * df['_Clean Sheets To Fixture'].fillna(0)
-             * player_fixture_stats['_Rel Def Strength'].fillna(1)
+                 # Clean sheet points
+                 + (np.where(player_fixture_stats['Field Position'].isin(['GK', 'DEF']), DEF_CLEAN_POINTS, 0)
+                    + np.where(player_fixture_stats['Field Position'].isin(['MID']), MID_CLEAN_POINTS, 0)
+                    + np.where(player_fixture_stats['Field Position'].isin(['FWD']), FWD_CLEAN_POINTS, 0))
+                 * df['_Clean Sheets To Fixture'].fillna(0)
+                 * player_fixture_stats['_Rel Def Strength'].fillna(1)
 
-             # Other points
-            + PEN_MISS_POINTS * df['_Penalties Missed To Fixture'].fillna(0)
-            + SAVES_POINTS * df['_Saves Multiples To Fixture'].fillna(0)
-            + PEN_SAVE_POINTS * df['_Penalties Saved To Fixture'].fillna(0)
-            + df['_Bonus Points To Fixture'].fillna(0)
-            + YELLOW_CARD_POINTS * df['_Yellow Cards To Fixture'].fillna(0)
-            + RED_CARD_POINTS * df['_Red Cards To Fixture'].fillna(0)
-            + df['_Minutes >60 Played To Fixture']*MIN_LONG_POINTS+df['_Minutes <60 Played To Fixture']*MIN_SHORT_POINTS)
+                 # Other points not dependent on attacking or defensive strength
+                + PEN_MISS_POINTS * df['_Penalties Missed To Fixture'].fillna(0)
+                + SAVES_POINTS * df['_Saves Multiples To Fixture'].fillna(0)
+                + PEN_SAVE_POINTS * df['_Penalties Saved To Fixture'].fillna(0)
+                + OWN_GOAL_POINTS * df['_Own Goals To Fixture'].fillna(0)
+                + df['_Bonus Points To Fixture'].fillna(0)
+                + YELLOW_CARD_POINTS * df['_Yellow Cards To Fixture'].fillna(0)
+                + RED_CARD_POINTS * df['_Red Cards To Fixture'].fillna(0)
+                + MIN_LONG_POINTS*df['_Minutes >60 Played To Fixture']+MIN_SHORT_POINTS*df['_Minutes <60 Played To Fixture'])
             / df['Fixtures Played To Fixture'],
         0)
 
@@ -574,7 +574,7 @@ def get_players_fixture_team_eps(player_fixture_stats: DF) -> DF:
     return (player_fixture_stats.sort_values(['Player Code', 'Kick Off Time'])
             .assign(**{'Expected Points': lambda df: df.pipe(calc_eps_ext)})
             .assign(**{'Expected Points Simple': lambda df: df.pipe(calc_eps_ext_simple)})
-            .assign(**{'Rel Strength': lambda df: df['Expected Points']/df['Expected Points Simple']})
+            .assign(**{'Rel Strength': lambda df: np.where(df['Expected Points Simple'] != 0, df['Expected Points']/df['Expected Points Simple'], 1)})
             )
 
 
