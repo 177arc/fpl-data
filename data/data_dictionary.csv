@@ -40,9 +40,9 @@ team,strength,Team Strength,Rating of the team's strength on a scale from 2 to 5
 fixture,code,Fixture Code,ID of the fixture that is unique across seasons,int,{:.1f}
 fixture,,Fixture Strength Home,Strength of the home team for a specific fixture,int,{:.0f}
 fixture,,Fixture Strength Away,Strength of the away team for a specific fixture,int,{:.0f}
-fixture,,Rel. Fixture Strength,Strengh of this team relative to the opponent team for a specific fixture,float,{:.2f}
-fixture,,Rel. Fixture Strength Home,Strengh of the home team relative to the away team for a specific fixture,float,{:.2f}
-fixture,,Rel. Fixture Strength Away,Strengh of the away team relative to the home team for a specific fixture,float,{:.2f}
+fixture,,Rel. Fixture Strength,Strength of this team relative to the opponent team for a specific fixture,float,{:.2f}
+fixture,,Rel. Fixture Strength Home,Strength of the home team relative to the away team for a specific fixture,float,{:.2f}
+fixture,,Rel. Fixture Strength Away,Strength of the away team relative to the home team for a specific fixture,float,{:.2f}
 fixture,,Rel. Fixture Strength Finished GWs,Average relative strengths of all completed fixtures (higher values indicate lower difficulty),float,{:.2f}
 fixture,,Rel. Fixture Strength Next GW,Average relative strengths of the next fixture (higher values indicate lower difficulty),float,{:.2f}
 fixture,,Rel. Fixture Strength Next 8 GWs,Average relative strengths of the next five fixtures (higher values indicate lower difficulty),float,{:.2f}
@@ -53,13 +53,18 @@ fixture,,Opp Team ID,ID of the opposing team,int,{:.0f}
 fixture,,Fixture Short Name,"Short names of teams, e.g. ARS-BUR",str,
 fixture,,Fixture Short Name FDR,"Short names of teams with difficulty score, e.g. ARS-BUR (2)",str,
 fixture,,Rel Fixture Strength,Relative strength of this fixture compared to previous ones. This generally a factor between 0.5 and 2. A factor below 1 indicates that this fixture is more difficult than the previous ones.,float,{:.1f}
-,,Next GW,Number of fixtures to the next game week for a specifc team. This is 1 except after the last game week. Note that there occassionally can be two fixtures in one game week.,int,
-,,Next 8 GWs,Number of fixtures to next five game weeks for a specific team. This is the minimum of 5 and the number of the gameweeks left for the current season. Note that there occassionally can be two fixtures in one game week.,int,
-,,GWs To Half,Number of fixtures to the end of the current half of the season for a specific team. Note that there occassionally can be two fixtures in one game week.,int,
-,,GWs To End,Number of fixtures to the end of the season for a specific team. Note that there occassionally can be two fixtures in one game week.,int,
+,,Next GW,Number of fixtures to the next game week for a specifc team. This is 1 except after the last game week. Note that there occasionally can be two fixtures in one game week.,int,
+,,Next 8 GWs,Number of fixtures to next five game weeks for a specific team. This is the minimum of 5 and the number of the game weeks left for the current season. Note that there occassionally can be two fixtures in one game week.,int,
+,,GWs To Half,Number of fixtures to the end of the current half of the season for a specific team. Note that there occasionally can be two fixtures in one game week.,int,
+,,GWs To End,Number of fixtures to the end of the season for a specific team. Note that there occasionally can be two fixtures in one game week.,int,
 ,,Total Points Consistency,Consistency of the total point for the player up to the current GW. It is calculated as the average of the points relative to the maximum points and expressed as a percentage so that complete consistency results in 100%.,int,{:.0f}%
 ,,Current Points Consistency,Consistency of the total point for the player up to the current GW. It is calculated as the average of the points relative to the maximum points and expressed as a percentage so that complete consistency results in 100%.,int,{:.0f}%
-,,Fixtures Played To Fixture,Number of fixtures played in the look back period. A fixture counts as played if the player played for at least one minute.,int,{:.0f}
+,,Total Points To Fixture,Total number of points that this player earned during the look back period.,int,{:.0f}
+,,ICT Index To Fixture,"Sum of all influence, creativity and thread index scores that this player earned during the look back period.",float,{:.1f}
+,,Influence To Fixture,Sum of all influence points that this player earned during the look back period.,float,{:.1f}
+,,Creativity To Fixture,Sum of all creativity points that this player earned during the look back period.,float,{:.1f}
+,,Threat To Fixture,Sum of all thread points that this player earned during the look back period.,float,{:.1f}
+,,Fixtures Played To Fixture,Number of fixtures that this player played during the look back period.. A fixture counts as played if the player played for at least one minute.,int,{:.0f}
 ,,Stats Completeness,Fraction of available fixture information over the player fixture look back window.,str,
 ,,Stats Completeness Percent,Percentage of available fixture information over the player fixture look back window.,float,{:.0f}%
 player,selling_price,Selling Price,Money received when selling player,float,£{:.1f}m
@@ -77,7 +82,7 @@ player,form,Form,Average points the player received for each fixture played in t
 player,photo,Profile Picture,Name of the player profile picture.,str,
 player,goals_scored,Goals Scored,Number of goals scored by the player since the beginning of the season.,int,{:.0f}
 player,assists,Assists,Number of assists to goals by the player since the beginning of the season.,int,{:.0f}
-player,clean_sheets,Clean Sheets,"Number of clean sheets that the player was awared since the beginning of the season. Note that if a player does not play during a fixture with a clean sheet, the clean sheet count for this player will not increase.",int,{:.0f}
+player,clean_sheets,Clean Sheets,"Number of clean sheets that the player was awarded since the beginning of the season. Note that if a player does not play during a fixture with a clean sheet, the clean sheet count for this player will not increase.",int,{:.0f}
 player,goals_conceded,Goals Conceded,Number of goals conceded while the player was playing since the beginning of the season.,int,{:.0f}
 player,own_goals,Own Goals,Number of own goals scored by the player since the beginning of the season.,int,{:.0f}
 player,"penalties_saved	",Penalties Saved,Number of penalties saved by the player since the beginning of the season.,int,{:.0f}
@@ -106,7 +111,7 @@ player_hist,minutes,Fixture Minutes Played,Number of minutes the player played a
 player_hist,value,Fixture Cost x10,The cost of the player at the end of the season in millions times 10.,float,{:.0f}
 player_hist,goals_scored,Fixture Goals Scored,Number of goals scored by the player during the match.,int,{:.0f}
 player_hist,assists,Fixture Assists,Number of assists to goals by the player during the match.,int,{:.0f}
-player_hist,clean_sheets,Fixture Clean Sheets,"Number of clean sheets that the player was awared during the match. Note that if a player does not play during a fixture with a clean sheet, the clean sheet count for this player will not increase.",int,{:.0f}
+player_hist,clean_sheets,Fixture Clean Sheets,"Number of clean sheets that the player was awarded during the match. Note that if a player does not play during a fixture with a clean sheet, the clean sheet count for this player will not increase.",int,{:.0f}
 player_hist,goals_conceded,Fixture Goals Conceded,Number of goals conceded while the player was playing during the match.,int,{:.0f}
 player_hist,own_goals,Fixture Own Goals,Number of own goals scored by the player during the match.,int,{:.0f}
 player_hist,penalties_saved,Fixture Penalties Saved,Number of penalties saved by the player during the match.,int,{:.0f}

@@ -385,7 +385,7 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
             .merge(players_history[['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Goals Scored', 'Fixture Assists', 'Fixture Goals Conceded',
                                     'Fixture Own Goals', 'Fixture Penalties Missed', 'Fixture Yellow Cards',
                                    'Fixture Red Cards', 'Fixture Bonus Points', 'Fixture Saves', 'Fixture Clean Sheets',
-                                   'Fixture Penalties Saved']],
+                                   'Fixture Penalties Saved', 'Fixture ICT Index', 'Fixture Influence', 'Fixture Creativity', 'Fixture Threat']],
                    left_on=['Player Code', 'Fixture Code'], right_index=True, how='left', suffixes=(False, False))
             .sort_values(['Player Code', 'Kick Off Time'])
             .set_index(['Player Code', 'Fixture Code'])
@@ -395,6 +395,10 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
             .assign(**{'Fixture Goals Conceded Multiples': lambda df: np.floor(df['Fixture Goals Conceded']/2)})
             .assign(**{'Fixture Saves Multiples': lambda df: np.floor(df['Fixture Saves']/3)})
             .assign(**{'Fixture Played': lambda df: df['Fixture Minutes Played'] > 0})
+            .assign(**{'ICT Index To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture ICT Index', ctx).ffill()})
+            .assign(**{'Influence To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Influence', ctx).ffill()})
+            .assign(**{'Creativity To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Creativity', ctx).ffill()})
+            .assign(**{'Threat To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Threat', ctx).ffill()})
             .assign(**{'Total Points To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Total Points', ctx).ffill()})
             .assign(**{'Fixtures Played To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Played', ctx).ffill()})
             .assign(**{'_Minutes >60 Played To Fixture': lambda df: df.pipe(roll_sum_back, 'Player Code', 'Fixture Minutes >60 Played', ctx).ffill()})
