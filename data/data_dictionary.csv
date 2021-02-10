@@ -1,4 +1,4 @@
-﻿Data Set,Field,Name,Description,Type,Format
+Data Set,Field,Name,Description,Type,Format
 player,web_name,Name,Simplified unique name of the player,str,
 player,current_cost,Current Cost,Current cost of the player,float,£{:.1f}m
 player,now_cost,Current Cost x10,Current cost of the player times 10,float,£{:.1f}m
