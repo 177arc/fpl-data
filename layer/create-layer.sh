@@ -12,10 +12,13 @@ mkdir python
 # Download python packages
 pip3 install -r ../requirements.txt --ignore-installed --target python
 
-# Remove tests to reduce size
+# Remove unused code to reduce size
 find python -type d -name "__pycache__" -exec rm -rf {} +
+find python -type d -name "_pytest" -exec rm -rf {} +
 find python -type d -name "tests" -exec rm -rf {} +
+find python -type d -name "test" -exec rm -rf {} +
 find python -type d -name "datasets" -exec rm -rf {} +
+find python -type d -name "data" -exec rm -rf {} +
 
 # Create zip file in the root directory
 rm layer.zip || true

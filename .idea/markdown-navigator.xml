@@ -26,7 +26,7 @@
     </ParserSettings>
     <HtmlSettings headerTopEnabled="false" headerBottomEnabled="false" bodyTopEnabled="false" bodyBottomEnabled="false" addPageHeader="false" addAnchorLinks="false" anchorLinksWrapText="false" imageUriSerials="false" addDocTypeHtml="true" noParaTags="false" defaultUrlTitle="false" migratedPlantUml="true" migratedAnchorLinks="true" plantUmlConversion="0">
       <GeneratorProvider>
-        <provider providerId="com.vladsch.md.nav.editor.text.html.generator" providerName="Unmodified HTML Generator" />
+        <provider providerId="com.vladsch.md.nav.editor.swing.html.generator" providerName="Default Swing HTML Generator" />
       </GeneratorProvider>
       <headerTop />
       <headerBottom />
@@ -52,7 +52,7 @@
     </HtmlSettings>
     <CssSettings previewScheme="UI_SCHEME" cssUri="" isCssUriEnabled="false" isCssUriSerial="true" isCssTextEnabled="false" isDynamicPageWidth="true">
       <StylesheetProvider>
-        <provider providerId="com.vladsch.md.nav.editor.text.html.css" providerName="No Stylesheet" />
+        <provider providerId="com.vladsch.md.nav.editor.swing.html.css" providerName="Default Swing Stylesheet" />
       </StylesheetProvider>
       <ScriptProviders />
       <cssText />
