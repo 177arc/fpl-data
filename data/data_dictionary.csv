@@ -59,12 +59,12 @@ fixture,,Rel Fixture Strength,Relative strength of this fixture compared to prev
 ,,GWs To End,Number of fixtures to the end of the season for a specific team. Note that there occasionally can be two fixtures in one game week.,int,
 ,,Total Points Consistency,Consistency of the total point for the player up to the current GW. It is calculated as the average of the points relative to the maximum points and expressed as a percentage so that complete consistency results in 100%.,int,{:.0f}%
 ,,Current Points Consistency,Consistency of the total point for the player up to the current GW. It is calculated as the average of the points relative to the maximum points and expressed as a percentage so that complete consistency results in 100%.,int,{:.0f}%
-,,Total Points To Fixture,Total number of points that this player earned during the look back period.,int,{:.0f}
-,,ICT Index To Fixture,"Sum of all influence, creativity and thread index scores that this player earned during the look back period.",float,{:.1f}
-,,Influence To Fixture,Sum of all influence points that this player earned during the look back period.,float,{:.1f}
-,,Creativity To Fixture,Sum of all creativity points that this player earned during the look back period.,float,{:.1f}
-,,Threat To Fixture,Sum of all thread points that this player earned during the look back period.,float,{:.1f}
-,,Fixtures Played To Fixture,Number of fixtures that this player played during the look back period.. A fixture counts as played if the player played for at least one minute.,int,{:.0f}
+,,Total Points Recent Fixtures,Total number of points that this player earned during the look back period.,int,{:.0f}
+,,ICT Index Recent Fixtures,"Sum of all influence, creativity and thread index scores that this player earned during the look back period.",float,{:.1f}
+,,Influence Recent Fixtures,Sum of all influence points that this player earned during the look back period.,float,{:.1f}
+,,Creativity Recent Fixtures,Sum of all creativity points that this player earned during the look back period.,float,{:.1f}
+,,Threat Recent Fixtures,Sum of all thread points that this player earned during the look back period.,float,{:.1f}
+,,Fixtures Played Recent Fixtures,Number of fixtures that this player played during the look back period.. A fixture counts as played if the player played for at least one minute.,int,{:.0f}
 ,,Stats Completeness,Fraction of available fixture information over the player fixture look back window.,str,
 ,,Stats Completeness Percent,Percentage of available fixture information over the player fixture look back window.,float,{:.0f}%
 player,selling_price,Selling Price,Money received when selling player,float,£{:.1f}m
