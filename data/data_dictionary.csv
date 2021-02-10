@@ -64,6 +64,10 @@ fixture,,Rel Fixture Strength,Relative strength of this fixture compared to prev
 ,,Influence Recent Fixtures,Sum of all influence points that this player earned during the look back period.,float,{:.1f}
 ,,Creativity Recent Fixtures,Sum of all creativity points that this player earned during the look back period.,float,{:.1f}
 ,,Threat Recent Fixtures,Sum of all thread points that this player earned during the look back period.,float,{:.1f}
+,,Avg ICT Index Recent Fixtures,"Average of all influence, creativity and thread index scores that this player earned during the look back period.",float,{:.1f}
+,,Avg Influence Recent Fixtures,Average of all influence points that this player earned during the look back period.,float,{:.1f}
+,,Avg Creativity Recent Fixtures,Average of all creativity points that this player earned during the look back period.,float,{:.1f}
+,,Avg Threat Recent Fixtures,Average of all thread points that this player earned during the look back period.,float,{:.1f}
 ,,Fixtures Played Recent Fixtures,Number of fixtures that this player played during the look back period.. A fixture counts as played if the player played for at least one minute.,int,{:.0f}
 ,,Stats Completeness,Fraction of available fixture information over the player fixture look back window.,str,
 ,,Stats Completeness Percent,Percentage of available fixture information over the player fixture look back window.,float,{:.0f}%

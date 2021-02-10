@@ -60,11 +60,11 @@ class TestE2E(unittest.TestCase):
         logging.info(f'Invoking {self.LAMBDA_NAME} ...')
         response = self.lmda.invoke(FunctionName=self.LAMBDA_NAME, InvocationType='RequestResponse', LogType='Tail')
 
+        logging.info(response['LogResult'])
+
         # Check response
         self.assertEqual(response['StatusCode'], 200)
         self.assertFalse('FunctionError' in response)
-
-        logging.info(response['LogResult'])
 
         # Check data
         for df in dfs:
