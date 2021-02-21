@@ -427,14 +427,14 @@ def get_player_team_fixture_strength(players: DF, team_fixture_strength: DF, pla
                                                                         df['_Rel Clean Sheet Fixture Strength Home'],
                                                                         df['_Rel Clean Sheet Fixture Strength Away'])})
             .assign(**{'Stats Completeness Percent': lambda df: df['Fixtures Played Recent Fixtures'] / ctx.player_fixtures_look_back * 100})
-
+            .assign(**{'Stats Completeness': lambda df: ctx.dd.format(DF(df['Fixtures Played Recent Fixtures'])) + f'/{ctx.player_fixtures_look_back}'})
             .assign(**{'Rolling Avg Game Points': lambda df: df.groupby('Player Code')['Fixture Total Points'].apply(lambda x: x.rolling(ctx.player_fixtures_look_back, min_periods=1).mean())
                     .where((df['Season'] == ctx.current_season) & (df['Game Week'] <= ctx.next_gw) | (df['Season'] != ctx.current_season))})
             .assign(**{'Avg ICT Index Recent Fixtures': lambda df: save_div(df['ICT Index Recent Fixtures'], df['Fixtures Played Recent Fixtures'])})
             .assign(**{'Avg Influence Recent Fixtures': lambda df: save_div(df['Influence Recent Fixtures'], df['Fixtures Played Recent Fixtures'])})
             .assign(**{'Avg Creativity Recent Fixtures': lambda df: save_div(df['Creativity Recent Fixtures'], df['Fixtures Played Recent Fixtures'])})
             .assign(**{'Avg Threat Recent Fixtures': lambda df: save_div(df['Threat Recent Fixtures'], df['Fixtures Played Recent Fixtures'])})
-            .assign(**{'Avg Total Point Recent Fixtures': lambda df: save_div(df['Total Points Recent Fixtures'], df['Fixtures Played Recent Fixtures'])})
+            .assign(**{'Avg Total Points Recent Fixtures': lambda df: save_div(df['Total Points Recent Fixtures'], df['Fixtures Played Recent Fixtures'])})
             .drop(columns=['Fixture Minutes Played', 'Fixture Total Points', 'Fixture Played']))
 
 
