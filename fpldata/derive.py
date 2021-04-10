@@ -496,7 +496,7 @@ def get_team_future_fixtures(team_fixture_strength: DF, players_history_fixtures
 
 def get_players_future_fixture_team_strengths(player_teams: DF, team_future_fixtures: DF) -> DF:
     return (player_teams
-            [['Player Team Code', 'Chance Avail Next GW', 'Field Position']]
+            [['Player Team Code', 'Chance Avail Next GW', 'Field Position', 'News']]
             .reset_index()
             .merge(team_future_fixtures, left_on=['Player Team Code'], right_index=True, suffixes=(False, False))
             .sort_values('Game Week')
@@ -504,7 +504,7 @@ def get_players_future_fixture_team_strengths(player_teams: DF, team_future_fixt
             # Project the chance available forward based on the chance available for the next game week. TODO: Need to update based on news.
             .assign(**{'Chance Avail': lambda df: df[['Chance Avail Next GW', 'Game Week']]
                     .groupby('Player Code').apply(lambda df: est_chance_avail(df).droplevel('Player Code')) if df.shape[0] > 0 else np.nan})
-            .drop(columns=['Game Week']))
+            .drop(columns=['Game Week', 'News']))
 
 
 def get_player_fixture_stats(players_history_fixtures: DF, players_future_fixture_team_strengths: DF, player_team_fixture_strength: DF) -> DF:

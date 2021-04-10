@@ -146,7 +146,7 @@ class FPLManager(FPLPandas, FPLManagerBase):
         logging.info('Done!')
 
     def assert_context(self, ctx: Context) -> NoReturn:
-        assert ctx.next_gw + len(ctx.next_gw_counts.keys()) == ctx.total_gws
+        assert ctx.next_gw + len(ctx.next_gw_counts.keys()) - 1 == ctx.total_gws
 
     def assert_team_goal_stats_ext(self, team_goal_stats_ext: DF) -> NoReturn:
         # TODO: Implement some sense checks.
