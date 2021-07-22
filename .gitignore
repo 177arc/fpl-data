@@ -5,3 +5,4 @@
 /*.zip
 /*.log
 /tests/comp/actual_*.csv
+/prep_data.py
